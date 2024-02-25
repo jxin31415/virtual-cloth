@@ -158,19 +158,19 @@ export class GUI implements IGUI {
 
     switch (key.code) {
       case "KeyW": {
-
+        this.camera.offset(this.camera.forward().negate(), GUI.zoomSpeed, true);
         break;
       }
       case "KeyA": {
-
+        this.camera.offset(this.camera.right().negate(), GUI.zoomSpeed, true);
         break;
       }
       case "KeyS": {
-
+        this.camera.offset(this.camera.forward(), GUI.panSpeed, true);
         break;
       }
       case "KeyD": {
-
+        this.camera.offset(this.camera.right(), GUI.panSpeed, true);
         break;
       }
       case "KeyR": {
@@ -186,11 +186,11 @@ export class GUI implements IGUI {
         break;
       }
       case "ArrowUp": {
-
+        this.camera.offset(this.camera.up(), GUI.panSpeed, true);
         break;
       }
       case "ArrowDown": {
-
+        this.camera.offset(this.camera.up().negate(), GUI.panSpeed, true);
         break;
       }
       case "Digit1": {
