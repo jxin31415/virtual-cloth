@@ -58,8 +58,8 @@ export class MengerSponge implements IMengerSponge {
   private buildSponge(level: number, l: number, origin: Vec3) {
     if (level <= 1) {
       var v = [
-        l, -l, -l, 1.0, -l, -l, -l, 1.0, l, l, -l, 1.0, l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, -l, 1.0, // Front face
-        l, -l, l, 1.0, l, l, l, 1.0, -l, -l, l, 1.0, l, l, l, 1.0, -l, l, l, 1.0, -l, -l, l, 1.0, // Back face 
+        l, -l, -l, 1.0, -l, -l, -l, 1.0, l, l, -l, 1.0, l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, -l, 1.0, // Back face
+        l, -l, l, 1.0, l, l, l, 1.0, -l, -l, l, 1.0, l, l, l, 1.0, -l, l, l, 1.0, -l, -l, l, 1.0, // Front face 
         -l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, l, 1.0, -l, -l, -l, 1.0, -l, -l, l, 1.0, -l, l, l, 1.0, // Right face
         l, l, -l, 1.0, l, l, l, 1.0, l, -l, -l, 1.0, l, -l, -l, 1.0, l, l, l, 1.0, l, -l, l, 1.0, // Left face
         l, -l, -l, 1.0, l, -l, l, 1.0, -l, -l, l, 1.0, -l, -l, l, 1.0, -l, -l, -l, 1.0, l, -l, -l, 1.0, // Bottom face
@@ -97,8 +97,7 @@ export class MengerSponge implements IMengerSponge {
   public setLevel(level: number)
   {
 	  this.dirty = true;
-    console.log("Setting level");
-
+    
     this.vertices = new Float32Array(this.buildSponge(level, 0.5, new Vec3([0, 0, 0])));
 
     this.faces = new Uint32Array(this.vertices.length / 4);
