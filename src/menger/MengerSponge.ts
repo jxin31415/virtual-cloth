@@ -60,8 +60,8 @@ export class MengerSponge implements IMengerSponge {
       var v = [
         l, -l, -l, 1.0, -l, -l, -l, 1.0, l, l, -l, 1.0, l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, -l, 1.0, // Front face
         l, -l, l, 1.0, l, l, l, 1.0, -l, -l, l, 1.0, l, l, l, 1.0, -l, l, l, 1.0, -l, -l, l, 1.0, // Back face 
-        l, l, -l, 1.0, l, l, l, 1.0, l, -l, -l, 1.0, l, -l, -l, 1.0, l, l, l, 1.0, l, -l, l, 1.0, // Left face
         -l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, l, 1.0, -l, -l, -l, 1.0, -l, -l, l, 1.0, -l, l, l, 1.0, // Right face
+        l, l, -l, 1.0, l, l, l, 1.0, l, -l, -l, 1.0, l, -l, -l, 1.0, l, l, l, 1.0, l, -l, l, 1.0, // Left face
         l, -l, -l, 1.0, l, -l, l, 1.0, -l, -l, l, 1.0, -l, -l, l, 1.0, -l, -l, -l, 1.0, l, -l, -l, 1.0, // Bottom face
         l, l, -l, 1.0, -l, l, l, 1.0, l, l, l, 1.0, -l, l, l, 1.0, l, l, -l, 1.0, -l, l, -l, 1.0, // Top face
       ];

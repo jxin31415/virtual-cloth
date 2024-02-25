@@ -154,8 +154,6 @@ export class GUI implements IGUI {
        We can use KeyDown due to auto repeating.
      */
 
-	// TOOD: Your code for key handling
-
     switch (key.code) {
       case "KeyW": {
         this.camera.offset(this.camera.forward().negate(), GUI.zoomSpeed, true);
@@ -178,11 +176,11 @@ export class GUI implements IGUI {
         break;
       }
       case "ArrowLeft": {
-
+        this.camera.roll(GUI.rollSpeed, false);
         break;
       }
       case "ArrowRight": {
-
+        this.camera.roll(GUI.rollSpeed, true);
         break;
       }
       case "ArrowUp": {
