@@ -35,7 +35,7 @@ export let defaultFSText = `
 	
     
     void main () {
-        float diffuse = max(0.0, dot(lightDir, normal));
+        float diffuse = max(0.0, dot(lightDir.xyz, normal.xyz));
         vec4 color = vec4(abs(normal[0]) * diffuse, abs(normal[1]) * diffuse, abs(normal[2]) * diffuse, 1.0);
         gl_FragColor = color;
 
