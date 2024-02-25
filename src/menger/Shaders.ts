@@ -35,7 +35,12 @@ export let defaultFSText = `
 	
     
     void main () {
+        vec3 ldNorm = normalize(lightDir.xyz);
+        vec3 nNorm = normalize(normal.xyz);
+
+        // float diffuse = clamp(dot(ldNorm, nNorm), 0.0, 1.0);
         float diffuse = max(0.0, dot(lightDir.xyz, normal.xyz));
+
         vec4 color = vec4(abs(normal[0]) * diffuse, abs(normal[1]) * diffuse, abs(normal[2]) * diffuse, 1.0);
         gl_FragColor = color;
 
@@ -47,5 +52,33 @@ export let defaultFSText = `
 // TODO: floor shaders
 
 export let floorVSText = ``;
+//     precision mediump float;
+
+//     attribute vec3 vertPosition;
+//     attribute vec3 vertColor;
+//     attribute vec4 aNorm;
+
+//     varying vec4 worldPosition;
+
+//     uniform vec4 lightPosition;
+//     uniform mat4 mWorld;
+//     uniform mat4 mView;
+//     uniform mat4 mProj;
+
+//     void main () {
+// 		//  Convert vertex to camera coordinates and the NDC
+//         gl_Position = mProj * mView * mWorld * vec4 (vertPosition, 1.0);
+		
+//         //  Pass along the vertex normal (world coordinates)
+//         worldPosition = vertPosition;
+//     }
+// `;
 export let floorFSText = ``;
+//     precision mediump float;
+
+//     varying vec3 worldPosition;
+//     void main () {
+
+//     }
+// `;
 
