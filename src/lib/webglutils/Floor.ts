@@ -11,14 +11,16 @@ export class Floor implements MaterialObject {
   private indicesU32: Uint32Array;
   private normalsF32: Float32Array;
 
+  private dirty: boolean;
+
   constructor() {
     /* Set default position. */
     this.vertices = [
       new Vec4([0, this.floorY, 0, 1]),
-      new Vec4([1, 0, 0, 0]),
-      new Vec4([0, 0, 1, 0]),
-      new Vec4([-1, 0, 0, 0]),
-      new Vec4([0, 0, -1, 0])
+      new Vec4([10000, this.floorY, 0, 0]),
+      new Vec4([0, this.floorY, 10000, 0]),
+      new Vec4([-10000, this.floorY, 0, 0]),
+      new Vec4([0, this.floorY, -10000, 0])
     ];
     console.assert(this.vertices != null);
     console.assert(this.vertices.length === 5);
@@ -54,6 +56,20 @@ export class Floor implements MaterialObject {
     ];
     this.normalsF32 = new Float32Array(this.norms.length*4);
     this.norms.forEach((v: Vec4, i: number) => {this.normalsF32.set(v.xyzw, i*4)});
+
+    this.dirty = true;
+  } 
+
+  public isDirty(): boolean {
+    return this.dirty;
+  }
+
+  public setDirty(): void {
+    this.dirty = true;
+  }
+
+  public setClean(): void {
+    this.dirty = false;
   }
 
   public positions(): Vec4[] {
@@ -91,8 +107,12 @@ export class Floor implements MaterialObject {
   }
 
   public uMatrix(): Mat4 {
-    throw new Error("Floor::uMatrix() incomplete method");
-    return new Mat4();
+    const ret : Mat4 = new Mat4().setIdentity();
+
+    return ret;    
+
+    // throw new Error("Floor::uMatrix() incomplete method");
+    // return new Mat4();
   }
 
   public scale(s: GLfloat): void {
