@@ -301,7 +301,7 @@ export class MengerAnimation extends CanvasAnimation {
     gl.uniformMatrix4fv(
       this.floorWorldUniformLocation,
       false,
-      new Float32Array(this.sponge.uMatrix().all())
+      new Float32Array(this.floor.uMatrix().all())
     );
     gl.uniformMatrix4fv(
       this.floorViewUniformLocation,

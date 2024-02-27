@@ -52,6 +52,7 @@ export class Floor implements MaterialObject {
       new Vec4([0.0, 1.0, 0.0, 0.0]),
       new Vec4([0.0, 1.0, 0.0, 0.0]),
       new Vec4([0.0, 1.0, 0.0, 0.0]),
+      new Vec4([0.0, 1.0, 0.0, 0.0]),
       new Vec4([0.0, 1.0, 0.0, 0.0])
     ];
     this.normalsF32 = new Float32Array(this.norms.length*4);
@@ -124,10 +125,12 @@ export class Floor implements MaterialObject {
   }
 
   public normals(): Vec4[] {
+    console.assert(this.vertices.length === 5);
     return this.norms;
   }
 
   public normalsFlat(): Float32Array {
+    console.assert(this.vertices.length === 5 * 4);
     return this.normalsF32;
   }
 }
