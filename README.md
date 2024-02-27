@@ -10,4 +10,4 @@ Implementation details:
 - The triangle indices and normals are filled in afterwards, since they follow a specific pre-determined pattern.
 - We display a floor with a checkerboard pattern, occupying the plane y = -2.
 - We use shaders to color the triangles with diffuse shading.
-- 
+  
