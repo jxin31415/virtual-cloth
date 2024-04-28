@@ -56,42 +56,18 @@ export class MengerSponge implements IMengerSponge {
   }
 
   private buildSponge(level: number, l: number, origin: Vec3) {
-    if (level <= 1) {
-      var v = [
-        l, -l, -l, 1.0, -l, -l, -l, 1.0, l, l, -l, 1.0, l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, -l, 1.0, // Back face
-        l, -l, l, 1.0, l, l, l, 1.0, -l, -l, l, 1.0, l, l, l, 1.0, -l, l, l, 1.0, -l, -l, l, 1.0, // Front face 
-        -l, l, -l, 1.0, -l, -l, -l, 1.0, -l, l, l, 1.0, -l, -l, -l, 1.0, -l, -l, l, 1.0, -l, l, l, 1.0, // Right face
-        l, l, -l, 1.0, l, l, l, 1.0, l, -l, -l, 1.0, l, -l, -l, 1.0, l, l, l, 1.0, l, -l, l, 1.0, // Left face
-        l, -l, -l, 1.0, l, -l, l, 1.0, -l, -l, l, 1.0, -l, -l, l, 1.0, -l, -l, -l, 1.0, l, -l, -l, 1.0, // Bottom face
-        l, l, -l, 1.0, -l, l, l, 1.0, l, l, l, 1.0, -l, l, l, 1.0, l, l, -l, 1.0, -l, l, -l, 1.0, // Top face
-      ];
-      for (var i: number = 0; i < v.length; i++) {
-        switch (i % 4) {
-          case 0:
-            v[i] += origin.x;
-            break;
-          case 1:
-            v[i] += origin.y;
-            break;
-          case 2:
-            v[i] += origin.z;
-            break;
-        }
-      }
-      return v;
-    }
-
-    var cons = [];
-    var l_f : number = l / 3;
-
-    for (var i: number = 0; i < MengerSponge.recursive_cubes.length; i++) {
-      var offset = MengerSponge.recursive_cubes[i];
-      var origin_f = new Vec3([origin.x + 2 * l_f * offset[0], origin.y + 2 * l_f * offset[1], origin.z + 2 * l_f * offset[2]]);
-      var v_f = this.buildSponge(level - 1, l_f, origin_f);
-      Array.prototype.push.apply(cons, v_f);
-    }
-
-    return cons;
+    let x = 1.0;
+    let y = 1.0;
+    let z = 1.0;
+    var v = [
+    x, -y, -z, 1.0, -x, -y, -z, 1.0, x, y, -z, 1.0, x, y, -z, 1.0, -x, -y, -z, 1.0, -x, y, -z, 1.0, // Back face
+    x, -y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, -x, -y, z, 1.0, // Front face 
+    -x, y, -z, 1.0, -x, -y, -z, 1.0, -x, y, z, 1.0, -x, -y, -z, 1.0, -x, -y, z, 1.0, -x, y, z, 1.0, // Right face
+    x, y, -z, 1.0, x, y, z, 1.0, x, -y, -z, 1.0, x, -y, -z, 1.0, x, y, z, 1.0, x, -y, z, 1.0, // Left face
+    x, -y, -z, 1.0, x, -y, z, 1.0, -x, -y, z, 1.0, -x, -y, z, 1.0, -x, -y, -z, 1.0, x, -y, -z, 1.0, // Bottom face
+    x, y, -z, 1.0, -x, y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, x, y, -z, 1.0, -x, y, -z, 1.0, // Top face
+    ];
+    return v;
   }
   
   public setLevel(level: number)
