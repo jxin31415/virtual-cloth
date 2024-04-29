@@ -130,7 +130,7 @@ export class Floor implements MaterialObject {
   }
 
   public normalsFlat(): Float32Array {
-    console.assert(this.vertices.length === 5 * 4);
+    console.assert(this.verticesF32.length === 5 * 4);
     return this.normalsF32;
   }
 }

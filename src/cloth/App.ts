@@ -23,6 +23,7 @@ export interface ClothAnimationTest {
 
 export class ClothAnimation extends CanvasAnimation {
   private gui: GUI;
+  private millis: number;
   
   private cloth: Cloth = new Cloth(1);
 
@@ -93,7 +94,7 @@ export class ClothAnimation extends CanvasAnimation {
     this.initFloor();
 
     this.gui.reset();
-
+    this.millis = new Date().getTime();
   }
 
   /**
@@ -319,6 +320,11 @@ export class ClothAnimation extends CanvasAnimation {
    * Draws a single frame
    */
   public draw(): void {
+    let curr = new Date().getTime();
+    let deltaT = (curr - this.millis) / 1000.0
+    this.millis = curr
+
+    console.log(deltaT)
 
     const gl: WebGLRenderingContext = this.ctx;
 
