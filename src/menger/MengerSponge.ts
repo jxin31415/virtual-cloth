@@ -23,24 +23,10 @@ export class MengerSponge implements IMengerSponge {
   private static normal_map: Float32Array = new Float32Array([
     0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, // -Z direction
     0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, // Z direction
-    -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, // -X direction
-    1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, // X direction
-    0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, // -Y direction
-    0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, // Y direction
   ]);
-
-  private static recursive_cubes = [
-    [-1, -1, -1], [0, -1, -1], [1, -1, -1],
-    [-1, -1, 0], [1, -1, 0], // [0, -1, 0], 
-    [-1, -1, 1], [0, -1, 1], [1, -1, 1], // Bottom layer
-    [-1, 1, -1], [0, 1, -1], [1, 1, -1],
-    [-1, 1, 0], [1, 1, 0], // [0, 1, 0], 
-    [-1, 1, 1], [0, 1, 1], [1, 1, 1], // Top layer
-    [-1, 0, -1], [1, 0, -1], [-1, 0, 1],  [1, 0, 1], // Middle layer
-  ];
   
   constructor(level: number) {
-	  this.setLevel(level);
+    this.setLevel(level);
     this.dirty = true;
   }
 
@@ -48,33 +34,29 @@ export class MengerSponge implements IMengerSponge {
    * Returns true if the sponge has changed.
    */
   public isDirty(): boolean {
-      return this.dirty;
+    return this.dirty;
   }
 
   public setClean(): void {
     this.dirty = false;
   }
 
-  private buildSponge(level: number, l: number, origin: Vec3) {
+  private buildSponge() {
     let x = 1.0;
     let y = 1.0;
     let z = 1.0;
     var v = [
-    x, -y, -z, 1.0, -x, -y, -z, 1.0, x, y, -z, 1.0, x, y, -z, 1.0, -x, -y, -z, 1.0, -x, y, -z, 1.0, // Back face
+    x, -y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, -x, y, z, 1.0, // Back face
     x, -y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, -x, -y, z, 1.0, // Front face 
-    -x, y, -z, 1.0, -x, -y, -z, 1.0, -x, y, z, 1.0, -x, -y, -z, 1.0, -x, -y, z, 1.0, -x, y, z, 1.0, // Right face
-    x, y, -z, 1.0, x, y, z, 1.0, x, -y, -z, 1.0, x, -y, -z, 1.0, x, y, z, 1.0, x, -y, z, 1.0, // Left face
-    x, -y, -z, 1.0, x, -y, z, 1.0, -x, -y, z, 1.0, -x, -y, z, 1.0, -x, -y, -z, 1.0, x, -y, -z, 1.0, // Bottom face
-    x, y, -z, 1.0, -x, y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, x, y, -z, 1.0, -x, y, -z, 1.0, // Top face
     ];
     return v;
   }
   
   public setLevel(level: number)
   {
-	  this.dirty = true;
+    this.dirty = true;
     
-    this.vertices = new Float32Array(this.buildSponge(level, 0.5, new Vec3([0, 0, 0])));
+    this.vertices = new Float32Array(this.buildSponge());
 
     this.faces = new Uint32Array(this.vertices.length / 4);
     for(var i : number = 0; i < this.faces.length; i++) {
@@ -99,6 +81,7 @@ export class MengerSponge implements IMengerSponge {
    * Returns a flat Uint32Array of the sponge's face indices
    */
   public indicesFlat(): Uint32Array {
+    console.log(this.faces)
     return this.faces;
   }
 
