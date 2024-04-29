@@ -1,7 +1,7 @@
 import { Mat3, Mat4, Vec3, Vec4 } from "../lib/TSM.js";
 
 /* A potential interface that students should implement */
-interface IMengerSponge {
+interface ICloth {
   setLevel(level: number): void;
   isDirty(): boolean;
   setClean(): void;
@@ -11,9 +11,9 @@ interface IMengerSponge {
 }
 
 /**
- * Represents a Menger Sponge
+ * Represents a Cloth
  */
-export class MengerSponge implements IMengerSponge {
+export class Cloth implements ICloth {
 
   private dirty : boolean = true;
   private vertices : Float32Array;
@@ -31,7 +31,7 @@ export class MengerSponge implements IMengerSponge {
   }
 
   /**
-   * Returns true if the sponge has changed.
+   * Returns true if the cloth has changed.
    */
   public isDirty(): boolean {
     return this.dirty;
@@ -41,7 +41,7 @@ export class MengerSponge implements IMengerSponge {
     this.dirty = false;
   }
 
-  private buildSponge() {
+  private buildCloth() {
     let x = 1.0;
     let y = 1.0;
     let z = 1.0;
@@ -56,7 +56,7 @@ export class MengerSponge implements IMengerSponge {
   {
     this.dirty = true;
     
-    this.vertices = new Float32Array(this.buildSponge());
+    this.vertices = new Float32Array(this.buildCloth());
 
     this.faces = new Uint32Array(this.vertices.length / 4);
     for(var i : number = 0; i < this.faces.length; i++) {
@@ -65,20 +65,20 @@ export class MengerSponge implements IMengerSponge {
 
     this.normals = new Float32Array(this.vertices.length);
     for(var i : number = 0, j : number = 0; i < this.normals.length; i++, j++) {
-      if (j >= MengerSponge.normal_map.length) {
+      if (j >= Cloth.normal_map.length) {
         j = 0;
       }
-      this.normals[i] = MengerSponge.normal_map[j];
+      this.normals[i] = Cloth.normal_map[j];
     }
   }
 
-  /* Returns a flat Float32Array of the sponge's vertex positions */
+  /* Returns a flat Float32Array of the cloth's vertex positions */
   public positionsFlat(): Float32Array {
 	  return this.vertices;
   }
 
   /**
-   * Returns a flat Uint32Array of the sponge's face indices
+   * Returns a flat Uint32Array of the cloth's face indices
    */
   public indicesFlat(): Uint32Array {
     console.log(this.faces)
@@ -86,14 +86,14 @@ export class MengerSponge implements IMengerSponge {
   }
 
   /**
-   * Returns a flat Float32Array of the sponge's normals
+   * Returns a flat Float32Array of the cloth's normals
    */
   public normalsFlat(): Float32Array {
 	  return this.normals;
   }
 
   /**
-   * Returns the model matrix of the sponge
+   * Returns the model matrix of the cloth
    */
   public uMatrix(): Mat4 {
 

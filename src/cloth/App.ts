@@ -3,8 +3,8 @@ import {
   WebGLUtilities
 } from "../lib/webglutils/CanvasAnimation.js";
 import { GUI } from "./Gui.js";
-import { MengerSponge } from "./MengerSponge.js";
-import { mengerTests } from "./tests/MengerTests.js";
+import { Cloth } from "./Cloth.js";
+import { clothTests } from "./tests/ClothTests.js";
 import {
   defaultFSText,
   defaultVSText,
@@ -14,37 +14,36 @@ import {
 import { Mat4, Vec4 } from "../lib/TSM.js";
 import { Floor } from "../lib/webglutils/Floor.js";
 
-export interface MengerAnimationTest {
+export interface ClothAnimationTest {
   reset(): void;
   setLevel(level: number): void;
   getGUI(): GUI;
   draw(): void;
 }
 
-export class MengerAnimation extends CanvasAnimation {
+export class ClothAnimation extends CanvasAnimation {
   private gui: GUI;
   
-  /* The Menger sponge */
-  private sponge: MengerSponge = new MengerSponge(1);
+  private cloth: Cloth = new Cloth(1);
 
-  /* Menger Sponge Rendering Info */
-  private mengerVAO: WebGLVertexArrayObjectOES = -1;
-  private mengerProgram: WebGLProgram = -1;
+  /* Cloth Rendering Info */
+  private clothVAO: WebGLVertexArrayObjectOES = -1;
+  private clothProgram: WebGLProgram = -1;
 
-  /* Menger Buffers */
-  private mengerPosBuffer: WebGLBuffer = -1;
-  private mengerIndexBuffer: WebGLBuffer = -1;
-  private mengerNormBuffer: WebGLBuffer = -1;
+  /* Cloth Buffers */
+  private clothPosBuffer: WebGLBuffer = -1;
+  private clothIndexBuffer: WebGLBuffer = -1;
+  private clothNormBuffer: WebGLBuffer = -1;
 
-  /* Menger Attribute Locations */
-  private mengerPosAttribLoc: GLint = -1;
-  private mengerNormAttribLoc: GLint = -1;
+  /* Cloth Attribute Locations */
+  private clothPosAttribLoc: GLint = -1;
+  private clothNormAttribLoc: GLint = -1;
 
-  /* Menger Uniform Locations */
-  private mengerWorldUniformLocation: WebGLUniformLocation = -1;
-  private mengerViewUniformLocation: WebGLUniformLocation = -1;
-  private mengerProjUniformLocation: WebGLUniformLocation = -1;
-  private mengerLightUniformLocation: WebGLUniformLocation = -1;
+  /* Cloth Uniform Locations */
+  private clothWorldUniformLocation: WebGLUniformLocation = -1;
+  private clothViewUniformLocation: WebGLUniformLocation = -1;
+  private clothProjUniformLocation: WebGLUniformLocation = -1;
+  private clothLightUniformLocation: WebGLUniformLocation = -1;
 
   /* Global Rendering Info */
   private lightPosition: Vec4 = new Vec4();
@@ -75,7 +74,7 @@ export class MengerAnimation extends CanvasAnimation {
 
   constructor(canvas: HTMLCanvasElement) {
     super(canvas);
-    this.gui = new GUI(canvas, this, this.sponge);
+    this.gui = new GUI(canvas, this, this.cloth);
 
     /* Setup Animation */
     this.reset();
@@ -90,7 +89,7 @@ export class MengerAnimation extends CanvasAnimation {
     this.lightPosition = new Vec4([-10.0, 10.0, -10.0, 1.0]);
     this.backgroundColor = new Vec4([0.0, 0.37254903, 0.37254903, 1.0]);
 
-    this.initMenger();
+    this.initCloth();
     this.initFloor();
 
     this.gui.reset();
@@ -98,43 +97,43 @@ export class MengerAnimation extends CanvasAnimation {
   }
 
   /**
-   * Initialize the Menger sponge data structure
+   * Initialize the Cloth cloth data structure
    */
-  public initMenger(): void {
+  public initCloth(): void {
     
-    this.sponge.setLevel(1);
+    this.cloth.setLevel(1);
     
     /* Alias context for syntactic convenience */
     const gl: WebGLRenderingContext = this.ctx;
 
     
     /* Compile Shaders */
-    this.mengerProgram = WebGLUtilities.createProgram(
+    this.clothProgram = WebGLUtilities.createProgram(
       gl,
       defaultVSText,
       defaultFSText
     );
-    gl.useProgram(this.mengerProgram);
+    gl.useProgram(this.clothProgram);
 
-    /* Create VAO for Menger Sponge */
-    this.mengerVAO = this.extVAO.createVertexArrayOES() as WebGLVertexArrayObjectOES;
-    this.extVAO.bindVertexArrayOES(this.mengerVAO);
+    /* Create VAO for Cloth */
+    this.clothVAO = this.extVAO.createVertexArrayOES() as WebGLVertexArrayObjectOES;
+    this.extVAO.bindVertexArrayOES(this.clothVAO);
 
     /* Create and setup positions buffer*/
     // Returns a number that indicates where 'vertPosition' is in the shader program
-    this.mengerPosAttribLoc = gl.getAttribLocation(
-      this.mengerProgram,
+    this.clothPosAttribLoc = gl.getAttribLocation(
+      this.clothProgram,
       "vertPosition"
     );
     /* Ask WebGL to create a buffer */
-    this.mengerPosBuffer = gl.createBuffer() as WebGLBuffer;
+    this.clothPosBuffer = gl.createBuffer() as WebGLBuffer;
     /* Tell WebGL that you are operating on this buffer */
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.mengerPosBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.clothPosBuffer);
     /* Fill the buffer with data */
-    gl.bufferData(gl.ARRAY_BUFFER, this.sponge.positionsFlat(), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, this.cloth.positionsFlat(), gl.STATIC_DRAW);
     /* Tell WebGL how to read the buffer and where the data goes */
     gl.vertexAttribPointer(
-      this.mengerPosAttribLoc /* Essentially, the destination */,
+      this.clothPosAttribLoc /* Essentially, the destination */,
       4 /* Number of bytes per primitive */,
       gl.FLOAT /* The type of data */,
       false /* Normalize data. Should be false. */,
@@ -143,73 +142,73 @@ export class MengerAnimation extends CanvasAnimation {
       0 /* Initial offset into buffer */
     );
     /* Tell WebGL to enable to attribute */
-    gl.enableVertexAttribArray(this.mengerPosAttribLoc);
+    gl.enableVertexAttribArray(this.clothPosAttribLoc);
 
     /* Create and setup normals buffer*/
-    this.mengerNormAttribLoc = gl.getAttribLocation(
-      this.mengerProgram,
+    this.clothNormAttribLoc = gl.getAttribLocation(
+      this.clothProgram,
       "aNorm"
     );
-    this.mengerNormBuffer = gl.createBuffer() as WebGLBuffer;
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.mengerNormBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, this.sponge.normalsFlat(), gl.STATIC_DRAW);
+    this.clothNormBuffer = gl.createBuffer() as WebGLBuffer;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.clothNormBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.cloth.normalsFlat(), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
-      this.mengerNormAttribLoc,
+      this.clothNormAttribLoc,
       4,
       gl.FLOAT,
       false,
       4 * Float32Array.BYTES_PER_ELEMENT,
       0
     );
-    gl.enableVertexAttribArray(this.mengerNormAttribLoc);
+    gl.enableVertexAttribArray(this.clothNormAttribLoc);
 
     /* Create and setup index buffer*/
-    this.mengerIndexBuffer = gl.createBuffer() as WebGLBuffer;
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mengerIndexBuffer);
+    this.clothIndexBuffer = gl.createBuffer() as WebGLBuffer;
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.clothIndexBuffer);
     gl.bufferData(
       gl.ELEMENT_ARRAY_BUFFER,
-      this.sponge.indicesFlat(),
+      this.cloth.indicesFlat(),
       gl.STATIC_DRAW
     );
 
     /* End VAO recording */
-    this.extVAO.bindVertexArrayOES(this.mengerVAO);
+    this.extVAO.bindVertexArrayOES(this.clothVAO);
 
     /* Get uniform locations */
-    this.mengerWorldUniformLocation = gl.getUniformLocation(
-      this.mengerProgram,
+    this.clothWorldUniformLocation = gl.getUniformLocation(
+      this.clothProgram,
       "mWorld"
     ) as WebGLUniformLocation;
-    this.mengerViewUniformLocation = gl.getUniformLocation(
-      this.mengerProgram,
+    this.clothViewUniformLocation = gl.getUniformLocation(
+      this.clothProgram,
       "mView"
     ) as WebGLUniformLocation;
-    this.mengerProjUniformLocation = gl.getUniformLocation(
-      this.mengerProgram,
+    this.clothProjUniformLocation = gl.getUniformLocation(
+      this.clothProgram,
       "mProj"
     ) as WebGLUniformLocation;
-    this.mengerLightUniformLocation = gl.getUniformLocation(
-      this.mengerProgram,
+    this.clothLightUniformLocation = gl.getUniformLocation(
+      this.clothProgram,
       "lightPosition"
     ) as WebGLUniformLocation;
 
     /* Bind uniforms */
     gl.uniformMatrix4fv(
-      this.mengerWorldUniformLocation,
+      this.clothWorldUniformLocation,
       false,
-      new Float32Array(this.sponge.uMatrix().all())
+      new Float32Array(this.cloth.uMatrix().all())
     );
     gl.uniformMatrix4fv(
-      this.mengerViewUniformLocation,
+      this.clothViewUniformLocation,
       false,
       new Float32Array(Mat4.identity.all())
     );
     gl.uniformMatrix4fv(
-      this.mengerProjUniformLocation,
+      this.clothProjUniformLocation,
       false,
       new Float32Array(Mat4.identity.all())
     );
-    gl.uniform4fv(this.mengerLightUniformLocation, this.lightPosition.xyzw);
+    gl.uniform4fv(this.clothLightUniformLocation, this.lightPosition.xyzw);
   }
 
   /**
@@ -332,77 +331,77 @@ export class MengerAnimation extends CanvasAnimation {
     gl.frontFace(gl.CCW);
     gl.cullFace(gl.BACK);
 
-    /* Menger - Update/Draw */
-    const modelMatrix = this.sponge.uMatrix();
-    gl.useProgram(this.mengerProgram);
+    /* Cloth - Update/Draw */
+    const modelMatrix = this.cloth.uMatrix();
+    gl.useProgram(this.clothProgram);
 
-    this.extVAO.bindVertexArrayOES(this.mengerVAO);
+    this.extVAO.bindVertexArrayOES(this.clothVAO);
 
-    /* Update menger buffers */
-    if (this.sponge.isDirty()) {
+    /* Update cloth buffers */
+    if (this.cloth.isDirty()) {
       this.floor.setDirty();
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.mengerPosBuffer);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.clothPosBuffer);
       gl.bufferData(
         gl.ARRAY_BUFFER,
-        this.sponge.positionsFlat(),
+        this.cloth.positionsFlat(),
         gl.STATIC_DRAW
       );
       gl.vertexAttribPointer(
-        this.mengerPosAttribLoc,
+        this.clothPosAttribLoc,
         4,
         gl.FLOAT,
         false,
         4 * Float32Array.BYTES_PER_ELEMENT,
         0
       );
-      gl.enableVertexAttribArray(this.mengerPosAttribLoc);
+      gl.enableVertexAttribArray(this.clothPosAttribLoc);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.mengerNormBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, this.sponge.normalsFlat(), gl.STATIC_DRAW);
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.clothNormBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, this.cloth.normalsFlat(), gl.STATIC_DRAW);
       gl.vertexAttribPointer(
-        this.mengerNormAttribLoc,
+        this.clothNormAttribLoc,
         4,
         gl.FLOAT,
         false,
         4 * Float32Array.BYTES_PER_ELEMENT,
         0
       );
-      gl.enableVertexAttribArray(this.mengerNormAttribLoc);
+      gl.enableVertexAttribArray(this.clothNormAttribLoc);
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.mengerIndexBuffer);
+      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.clothIndexBuffer);
       gl.bufferData(
         gl.ELEMENT_ARRAY_BUFFER,
-        this.sponge.indicesFlat(),
+        this.cloth.indicesFlat(),
         gl.STATIC_DRAW
       );
 
-      this.sponge.setClean();
+      this.cloth.setClean();
     }
 
-    /* Update menger uniforms */
+    /* Update cloth uniforms */
     gl.uniformMatrix4fv(
-      this.mengerWorldUniformLocation,
+      this.clothWorldUniformLocation,
       false,
       new Float32Array(modelMatrix.all())
     );
     gl.uniformMatrix4fv(
-      this.mengerViewUniformLocation,
+      this.clothViewUniformLocation,
       false,
       new Float32Array(this.gui.viewMatrix().all())
     );
     gl.uniformMatrix4fv(
-      this.mengerProjUniformLocation,
+      this.clothProjUniformLocation,
       false,
       new Float32Array(this.gui.projMatrix().all())
     );
 	
-	// console.log("Drawing ", this.sponge.indicesFlat().length, " triangles");
+	// console.log("Drawing ", this.cloth.indicesFlat().length, " triangles");
 
 
-    /* Draw menger */
+    /* Draw cloth */
     gl.drawElements(
       gl.TRIANGLES,
-      this.sponge.indicesFlat().length,
+      this.cloth.indicesFlat().length,
       gl.UNSIGNED_INT,
       0
     );
@@ -485,7 +484,7 @@ export class MengerAnimation extends CanvasAnimation {
   }
 
   public setLevel(level: number): void {
-    this.sponge.setLevel(level);
+    this.cloth.setLevel(level);
   }
 
   public getGUI(): GUI {
@@ -496,8 +495,8 @@ export class MengerAnimation extends CanvasAnimation {
 export function initializeCanvas(): void {
   const canvas = document.getElementById("glCanvas") as HTMLCanvasElement;
   /* Start drawing */
-  const canvasAnimation: MengerAnimation = new MengerAnimation(canvas);
-  mengerTests.registerDeps(canvasAnimation);
-  mengerTests.registerDeps(canvasAnimation);
+  const canvasAnimation: ClothAnimation = new ClothAnimation(canvas);
+  clothTests.registerDeps(canvasAnimation);
+  clothTests.registerDeps(canvasAnimation);
   canvasAnimation.start();
 }

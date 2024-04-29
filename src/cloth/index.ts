@@ -1,4 +1,4 @@
 import { initializeCanvas } from "./App.js";
-import "./tests/MengerTests.js"; /* For side effects. */
+import "./tests/ClothTests.js"; /* For side effects. */
 
 initializeCanvas();

@@ -1,6 +1,6 @@
 import { Camera } from "../lib/webglutils/Camera.js";
 import { CanvasAnimation } from "../lib/webglutils/CanvasAnimation.js";
-import { MengerSponge } from "./MengerSponge.js";
+import { Cloth } from "./Cloth.js";
 import { Mat4, Vec3 } from "../lib/TSM.js";
 
 /**
@@ -34,26 +34,26 @@ export class GUI implements IGUI {
   private height: number;
   private width: number;
 
-  private sponge: MengerSponge;
+  private cloth: Cloth;
   private animation: CanvasAnimation;
 
   /**
    *
    * @param canvas required to get the width and height of the canvas
    * @param animation required as a back pointer for some of the controls
-   * @param sponge required for some of the controls
+   * @param cloth required for some of the controls
    */
   constructor(
     canvas: HTMLCanvasElement,
     animation: CanvasAnimation,
-    sponge: MengerSponge
+    cloth: Cloth
   ) {
     this.height = canvas.height;
     this.width = canvas.width;
     this.prevX = 0;
     this.prevY = 0;
 
-    this.sponge = sponge;
+    this.cloth = cloth;
     this.animation = animation;
 
 	this.reset();
@@ -202,19 +202,19 @@ export class GUI implements IGUI {
         break;
       }
       case "Digit1": {
-        this.sponge.setLevel(1);
+        this.cloth.setLevel(1);
         break;
       }
       case "Digit2": {
-        this.sponge.setLevel(2);
+        this.cloth.setLevel(2);
         break;
       }
       case "Digit3": {
-        this.sponge.setLevel(3);
+        this.cloth.setLevel(3);
         break;
       }
       case "Digit4": {
-        this.sponge.setLevel(4);
+        this.cloth.setLevel(4);
         break;
       }
       default: {

@@ -1,7 +1,7 @@
-import { MengerSponge } from "../MengerSponge.js";
+import { Cloth } from "../Cloth.js";
 import { Mat4, Vec3, Vec4 } from "../../lib/TSM.js";
 import { isEqual, isTrue, shouldFail, Tests } from "../../lib/Suite.js";
-import { MengerAnimationTest } from "../App.js";
+import { ClothAnimationTest } from "../App.js";
 
 const canvas: HTMLCanvasElement = document.getElementById(
   "glCanvas"
@@ -47,17 +47,17 @@ function pressKey(target: EventTarget, keyCode: string, times: number) {
 }
 
 /* Create testing environment by linking with browser. */
-export const mengerTests: Tests<MengerAnimationTest> = new Tests(canvas, document.getElementById(
+export const clothTests: Tests<ClothAnimationTest> = new Tests(canvas, document.getElementById(
   "test-view"
 ) as HTMLElement);
 
-mengerTests.setup = (animation) => {
+clothTests.setup = (animation) => {
   if (animation) {
     animation.reset();
   }
 };
 
-mengerTests.cleanup = mengerTests.setup;
+clothTests.cleanup = clothTests.setup;
 
 
 
@@ -65,8 +65,8 @@ mengerTests.cleanup = mengerTests.setup;
 /**
  * Tests the isDirty and setClean methods.
  */
-mengerTests.unitTest("Menger isDirty/setClean", () => {
-  const m: MengerSponge = new MengerSponge(1);
+clothTests.unitTest("Cloth isDirty/setClean", () => {
+  const m: Cloth = new Cloth(1);
   // Must be dirty on creation
   isTrue(() => m.isDirty());
 
@@ -81,8 +81,8 @@ mengerTests.unitTest("Menger isDirty/setClean", () => {
  * Tests that the generated geometry is approximately
  * correct.
  */
-mengerTests.unitTest("Menger approximate positions/normals/indices", () => {
-  const m: MengerSponge = new MengerSponge(1);
+clothTests.unitTest("Cloth approximate positions/normals/indices", () => {
+  const m: Cloth = new Cloth(1);
 
   // Level one
   isTrue(() => m.normalsFlat().length >= 8 * 3);
@@ -109,12 +109,12 @@ mengerTests.unitTest("Menger approximate positions/normals/indices", () => {
 });
 
 /**
- * Menger Level integration tests
+ * Cloth Level integration tests
  */
 for (let i = 1; i < 5; i++) {
-  mengerTests.integrationTest(
-    "Menger Sponge Level " + i,
-    "./static/img/menger/level_" + i + "_ref.png",
+  clothTests.integrationTest(
+    "Cloth Level " + i,
+    "./static/img/cloth/level_" + i + "_ref.png",
     (animation) => {
       animation.reset();
       dragMouse(canvas, 1, -1, 10);
@@ -130,9 +130,9 @@ for (let i = 1; i < 5; i++) {
 /**
  * Tests the mouse orbital rotation
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "Mouse Orbital Rotation",
-  "./static/img/menger/mouse_orbit_rotation_ref.png",
+  "./static/img/cloth/mouse_orbit_rotation_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -146,9 +146,9 @@ for (let i = 1; i < 5; i++) {
 /**
  * Tests the mouse fps rotation
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Mouse FPS Rotation",
-  "./static/img/menger/mouse_fps_rotation_ref.png",
+  "./static/img/cloth/mouse_fps_rotation_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -160,9 +160,9 @@ mengerTests.integrationTest(
 /**
  * Tests mouse zoom in
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Mouse Zoom In",
-  "./static/img/menger/mouse_zoom_in_ref.png",
+  "./static/img/cloth/mouse_zoom_in_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -174,9 +174,9 @@ mengerTests.integrationTest(
 /**
  * Tests mouse zoom out
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Mouse Zoom Out",
-  "./static/img/menger/mouse_zoom_out_ref.png",
+  "./static/img/cloth/mouse_zoom_out_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -188,9 +188,9 @@ mengerTests.integrationTest(
 /**
  * Tests W key Orbital Mode
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "W Key (Orbital Mode)",
-  "./static/img/menger/w_orbital_ref.png",
+  "./static/img/cloth/w_orbital_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -203,9 +203,9 @@ mengerTests.integrationTest(
 /**
  * Tests W Key in FPS Mode
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "W Key (FPS Mode)",
-  "./static/img/menger/w_fps_ref.png",
+  "./static/img/cloth/w_fps_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -218,9 +218,9 @@ mengerTests.integrationTest(
 /**
  * Tests S key Orbital Mode
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "S Key (Orbital Mode)",
-  "./static/img/menger/s_orbital_ref.png",
+  "./static/img/cloth/s_orbital_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -233,9 +233,9 @@ mengerTests.integrationTest(
 /**
  * Tests S Key in FPS Mode
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "S Key (FPS Mode)",
-  "./static/img/menger/s_fps_ref.png",
+  "./static/img/cloth/s_fps_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -248,9 +248,9 @@ mengerTests.integrationTest(
 /**
  * Tests A key Orbital Mode
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "A Key (Orbital Mode)",
-  "./static/img/menger/a_orbital_ref.png",
+  "./static/img/cloth/a_orbital_ref.png",
   (animation) => {
     animation.reset();
     pressKey(window, "Digit2", 1);
@@ -264,9 +264,9 @@ mengerTests.integrationTest(
 /**
  * Tests A Key in FPS Mode
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "A Key (FPS Mode)",
-  "./static/img/menger/a_fps_ref.png",
+  "./static/img/cloth/a_fps_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -281,9 +281,9 @@ mengerTests.integrationTest(
 /**
  * Tests D key Orbital Mode
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "D Key (Orbital Mode)",
-  "./static/img/menger/d_orbital_ref.png",
+  "./static/img/cloth/d_orbital_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -299,9 +299,9 @@ mengerTests.integrationTest(
 /**
  * Tests D Key in FPS Mode
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "D Key (FPS Mode)",
-  "./static/img/menger/d_fps_ref.png",
+  "./static/img/cloth/d_fps_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -316,9 +316,9 @@ mengerTests.integrationTest(
 /**
  * Tests left arrow key
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Left Arrow Key",
-  "./static/img/menger/left_arrow_ref.png",
+  "./static/img/cloth/left_arrow_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -333,9 +333,9 @@ mengerTests.integrationTest(
 /**
  * Tests right arrow key
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Right Arrow Key",
-  "./static/img/menger/right_arrow_ref.png",
+  "./static/img/cloth/right_arrow_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -350,9 +350,9 @@ mengerTests.integrationTest(
 /**
  * Tests Up arrow key in orbital mode
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "Up Arrow Key (Orbital Mode)",
-  "./static/img/menger/up_arrow_orbital_ref.png",
+  "./static/img/cloth/up_arrow_orbital_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -367,9 +367,9 @@ mengerTests.integrationTest(
 /**
  * Tests up arrow in fps mode
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Up Arrow Key (FPS Mode)",
-  "./static/img/menger/up_arrow_fps_ref.png",
+  "./static/img/cloth/up_arrow_fps_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -383,9 +383,9 @@ mengerTests.integrationTest(
 /**
  * Tests down arrow key in orbital mode
  */
-/*mengerTests.integrationTest(
+/*clothTests.integrationTest(
   "Down Arrow Key (Orbital Mode)",
-  "./static/img/menger/down_arrow_orbital_ref.png",
+  "./static/img/cloth/down_arrow_orbital_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
@@ -400,9 +400,9 @@ mengerTests.integrationTest(
 /**
  * Tests down arrow in fps mode
  */
-mengerTests.integrationTest(
+clothTests.integrationTest(
   "Down Arrow Key (FPS Mode)",
-  "./static/img/menger/down_arrow_fps_ref.png",
+  "./static/img/cloth/down_arrow_fps_ref.png",
   (animation) => {
     if (animation) {
       animation.reset();
