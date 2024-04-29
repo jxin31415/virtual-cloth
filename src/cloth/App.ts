@@ -4,7 +4,7 @@ import {
 } from "../lib/webglutils/CanvasAnimation.js";
 import { GUI } from "./Gui.js";
 import { Cloth } from "./Cloth.js";
-import { clothTests } from "./tests/ClothTests.js";
+// import { clothTests } from "./tests/ClothTests.js";
 import {
   defaultFSText,
   defaultVSText,
@@ -101,7 +101,7 @@ export class ClothAnimation extends CanvasAnimation {
    */
   public initCloth(): void {
     
-    this.cloth.setLevel(1);
+    this.cloth.build(1);
     
     /* Alias context for syntactic convenience */
     const gl: WebGLRenderingContext = this.ctx;
@@ -483,10 +483,6 @@ export class ClothAnimation extends CanvasAnimation {
 
   }
 
-  public setLevel(level: number): void {
-    this.cloth.setLevel(level);
-  }
-
   public getGUI(): GUI {
     return this.gui;
   }
@@ -496,7 +492,7 @@ export function initializeCanvas(): void {
   const canvas = document.getElementById("glCanvas") as HTMLCanvasElement;
   /* Start drawing */
   const canvasAnimation: ClothAnimation = new ClothAnimation(canvas);
-  clothTests.registerDeps(canvasAnimation);
-  clothTests.registerDeps(canvasAnimation);
+//   clothTests.registerDeps(canvasAnimation);
+//   clothTests.registerDeps(canvasAnimation);
   canvasAnimation.start();
 }

@@ -1,19 +1,9 @@
 import { Mat3, Mat4, Vec3, Vec4 } from "../lib/TSM.js";
 
-/* A potential interface that students should implement */
-interface ICloth {
-  setLevel(level: number): void;
-  isDirty(): boolean;
-  setClean(): void;
-  normalsFlat(): Float32Array;
-  indicesFlat(): Uint32Array;
-  positionsFlat(): Float32Array;
-}
-
 /**
  * Represents a Cloth
  */
-export class Cloth implements ICloth {
+export class Cloth {
 
   private dirty : boolean = true;
   private vertices : Float32Array;
@@ -26,7 +16,7 @@ export class Cloth implements ICloth {
   ]);
   
   constructor(level: number) {
-    this.setLevel(level);
+    this.build(level);
     this.dirty = true;
   }
 
@@ -46,13 +36,13 @@ export class Cloth implements ICloth {
     let y = 1.0;
     let z = 1.0;
     var v = [
-    x, -y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, -x, y, z, 1.0, // Back face
-    x, -y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, -x, -y, z, 1.0, // Front face 
+        x, -y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, -x, y, z, 1.0, // Back face
+        x, -y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, -x, -y, z, 1.0, // Front face 
     ];
     return v;
   }
   
-  public setLevel(level: number)
+  public build(level: number)
   {
     this.dirty = true;
     

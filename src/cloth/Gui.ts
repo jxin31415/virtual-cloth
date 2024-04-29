@@ -181,10 +181,6 @@ export class GUI implements IGUI {
         this.camera.offset(this.camera.right(), GUI.panSpeed, true);
         break;
       }
-      case "KeyR": {
-
-        break;
-      }
       case "ArrowLeft": {
         this.camera.roll(GUI.rollSpeed, false);
         break;
@@ -199,22 +195,6 @@ export class GUI implements IGUI {
       }
       case "ArrowDown": {
         this.camera.offset(this.camera.up().negate(), GUI.panSpeed, true);
-        break;
-      }
-      case "Digit1": {
-        this.cloth.setLevel(1);
-        break;
-      }
-      case "Digit2": {
-        this.cloth.setLevel(2);
-        break;
-      }
-      case "Digit3": {
-        this.cloth.setLevel(3);
-        break;
-      }
-      case "Digit4": {
-        this.cloth.setLevel(4);
         break;
       }
       default: {
