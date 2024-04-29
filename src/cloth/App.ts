@@ -16,7 +16,7 @@ import { Floor } from "../lib/webglutils/Floor.js";
 
 export interface ClothAnimationTest {
   reset(): void;
-  setLevel(level: number): void;
+  setDensity(level: number): void;
   getGUI(): GUI;
   draw(): void;
 }
@@ -338,45 +338,40 @@ export class ClothAnimation extends CanvasAnimation {
     this.extVAO.bindVertexArrayOES(this.clothVAO);
 
     /* Update cloth buffers */
-    if (this.cloth.isDirty()) {
-      this.floor.setDirty();
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.clothPosBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        this.cloth.positionsFlat(),
-        gl.STATIC_DRAW
-      );
-      gl.vertexAttribPointer(
-        this.clothPosAttribLoc,
-        4,
-        gl.FLOAT,
-        false,
-        4 * Float32Array.BYTES_PER_ELEMENT,
-        0
-      );
-      gl.enableVertexAttribArray(this.clothPosAttribLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.clothPosBuffer);
+    gl.bufferData(
+    gl.ARRAY_BUFFER,
+    this.cloth.positionsFlat(),
+    gl.STATIC_DRAW
+    );
+    gl.vertexAttribPointer(
+    this.clothPosAttribLoc,
+    4,
+    gl.FLOAT,
+    false,
+    4 * Float32Array.BYTES_PER_ELEMENT,
+    0
+    );
+    gl.enableVertexAttribArray(this.clothPosAttribLoc);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.clothNormBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, this.cloth.normalsFlat(), gl.STATIC_DRAW);
-      gl.vertexAttribPointer(
-        this.clothNormAttribLoc,
-        4,
-        gl.FLOAT,
-        false,
-        4 * Float32Array.BYTES_PER_ELEMENT,
-        0
-      );
-      gl.enableVertexAttribArray(this.clothNormAttribLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.clothNormBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.cloth.normalsFlat(), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+    this.clothNormAttribLoc,
+    4,
+    gl.FLOAT,
+    false,
+    4 * Float32Array.BYTES_PER_ELEMENT,
+    0
+    );
+    gl.enableVertexAttribArray(this.clothNormAttribLoc);
 
-      gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.clothIndexBuffer);
-      gl.bufferData(
-        gl.ELEMENT_ARRAY_BUFFER,
-        this.cloth.indicesFlat(),
-        gl.STATIC_DRAW
-      );
-
-      this.cloth.setClean();
-    }
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.clothIndexBuffer);
+    gl.bufferData(
+    gl.ELEMENT_ARRAY_BUFFER,
+    this.cloth.indicesFlat(),
+    gl.STATIC_DRAW
+    );
 
     /* Update cloth uniforms */
     gl.uniformMatrix4fv(
@@ -415,6 +410,7 @@ export class ClothAnimation extends CanvasAnimation {
     this.extVAO.bindVertexArrayOES(this.floorVAO);
 
     /* Update floor buffers */
+    this.floor.setDirty();
     if (this.floor.isDirty()) {
       gl.bindBuffer(gl.ARRAY_BUFFER, this.floorPosBuffer);
       gl.bufferData(

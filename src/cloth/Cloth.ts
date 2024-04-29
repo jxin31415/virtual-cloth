@@ -5,7 +5,6 @@ import { Mat3, Mat4, Vec3, Vec4 } from "../lib/TSM.js";
  */
 export class Cloth {
 
-  private dirty : boolean = true;
   private vertices : Float32Array;
   private faces : Uint32Array;
   private normals : Float32Array;
@@ -15,20 +14,8 @@ export class Cloth {
     0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, // Z direction
   ]);
   
-  constructor(level: number) {
-    this.build(level);
-    this.dirty = true;
-  }
-
-  /**
-   * Returns true if the cloth has changed.
-   */
-  public isDirty(): boolean {
-    return this.dirty;
-  }
-
-  public setClean(): void {
-    this.dirty = false;
+  constructor(density: number) {
+    this.build(density);
   }
 
   private buildCloth() {
@@ -42,10 +29,8 @@ export class Cloth {
     return v;
   }
   
-  public build(level: number)
-  {
-    this.dirty = true;
-    
+  public build(density: number)
+  {    
     this.vertices = new Float32Array(this.buildCloth());
 
     this.faces = new Uint32Array(this.vertices.length / 4);
@@ -71,7 +56,6 @@ export class Cloth {
    * Returns a flat Uint32Array of the cloth's face indices
    */
   public indicesFlat(): Uint32Array {
-    console.log(this.faces)
     return this.faces;
   }
 
@@ -86,10 +70,7 @@ export class Cloth {
    * Returns the model matrix of the cloth
    */
   public uMatrix(): Mat4 {
-
-    // TODO: change this, if it's useful
     const ret : Mat4 = new Mat4().setIdentity();
-
     return ret;    
   }
   
