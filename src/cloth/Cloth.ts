@@ -5,6 +5,7 @@ import { flattenListOfVec } from "./Utils.js";
  * Represents a point within a cloth
  */ 
 export class ClothPoint {
+    public prevpos: Vec3;
     public pos: Vec3;
     public vel: Vec3;
     public accel: Vec3;
@@ -12,6 +13,7 @@ export class ClothPoint {
 
     constructor(p: Vec3, v: Vec3) {
         this.pos = p;
+        this.prevpos = p;
         this.vel = v;
         this.accel = new Vec3([0, 0, 0]);
     }
@@ -28,6 +30,13 @@ export class ClothPoint {
     }
 
     public trapezoidalIntegrate(time: number){
+
+    }
+
+    public verletIntegrate(time: number){
+      let temp = this.pos.copy()
+      this.pos = this.accel.copy().scale(time*time).add(this.pos.copy().scale(2)).subtract(this.prevpos);
+      this.prevpos = temp;
     }
 }
 
@@ -181,7 +190,7 @@ export class Cloth {
         let p1 = this.points[num1];
 
         // TODO: BETTER INTEGRATION METHODS
-        p1.eulerIntegrate(Cloth.deltaT);
+        p1.verletIntegrate(Cloth.deltaT);
       }
     }
   }
