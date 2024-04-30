@@ -58,7 +58,7 @@ export class Cloth {
   private static flexK = Cloth.tensile*2;
 
   private static drag = 1.3;
-  private static gravity = -9.8;
+  private static gravity = -9.8 / 1000.0;
   private static HAS_WIND = false;
   private static wind = 1.0;
   private static deltaT = 0.1;
