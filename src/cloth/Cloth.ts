@@ -167,10 +167,10 @@ export class Cloth {
 
     // spring accelerations
     for(let i = 0; i < this.springs.length; i++){
-      let p1 = this.points[this.springs[i][0]];
-      let p2 = this.points[this.springs[i][1]];
-      let k = this.springs[i][2];
-      let x = this.springs[i][3];
+      let p1 = this.points[this.springs[i].x];
+      let p2 = this.points[this.springs[i].y];
+      let k = this.springs[i].z;
+      let x = this.springs[i].w;
       let pos1 = p1.pos;
       let pos2 = p2.pos;
       let dir = pos1.copy().subtract(pos2).normalize();  
