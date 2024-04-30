@@ -9,12 +9,14 @@ export class ClothPoint {
     public pos: Vec3;
     public vel: Vec3;
     public accel: Vec3;
+    public fixed: boolean; // top two corner points are fixed maybe
 
-    constructor(p: Vec3, v: Vec3) {
+    constructor(p: Vec3, v: Vec3, f: boolean) {
         this.pos = p;
         this.prevpos = p;
         this.vel = v;
         this.accel = new Vec3([0, 0, 0]);
+        this.fixed = f;
     }
 
     public resetA(){
@@ -24,8 +26,10 @@ export class ClothPoint {
     }
 
     public eulerIntegrate(time: number){
-      this.pos.add(this.vel.copy().scale(time));
-      this.vel.add(this.accel.copy().scale(time));
+      if(!this.fixed){
+        this.pos.add(this.vel.copy().scale(time));
+        this.vel.add(this.accel.copy().scale(time));
+      }
     }
 
     public trapezoidalIntegrate(time: number){
@@ -33,9 +37,11 @@ export class ClothPoint {
     }
 
     public verletIntegrate(time: number){
-      let temp = this.pos.copy()
-      this.pos = this.accel.copy().scale(time*time).add(this.pos.copy().scale(2)).subtract(this.prevpos);
-      this.prevpos = temp;
+      if(!this.fixed){
+        let temp = this.pos.copy()
+        this.pos = this.accel.copy().scale(time*time).add(this.pos.copy().scale(2)).subtract(this.prevpos);
+        this.prevpos = temp;
+      }
     }
 }
 
@@ -52,7 +58,7 @@ export class Cloth {
   private springs: Vec4[];
 
   private static width = 1.0;
-  private static tensile = 200.0;
+  private static tensile = 2.0;
   private static structK = Cloth.tensile;
   private static sheerK = Cloth.tensile*Math.sqrt(2);
   private static flexK = Cloth.tensile*2;
@@ -79,7 +85,8 @@ export class Cloth {
 
             // this is here for debugging + it looks cool
               new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, 0.0 + Math.random() * 0.1]),
-              new Vec3([0, 0, 0])
+              new Vec3([0, 0, 0]),
+              ((i==0||i==density)&&j==0)
           ));
       }
     }
