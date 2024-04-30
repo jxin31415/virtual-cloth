@@ -25,7 +25,7 @@ export class ClothAnimation extends CanvasAnimation {
   private gui: GUI;
   private millis: number;
   
-  private cloth: Cloth = new Cloth(1);
+  private cloth: Cloth;
 
   /* Cloth Rendering Info */
   private clothVAO: WebGLVertexArrayObjectOES = -1;
@@ -101,9 +101,8 @@ export class ClothAnimation extends CanvasAnimation {
    * Initialize the Cloth cloth data structure
    */
   public initCloth(): void {
-    
-    this.cloth.build(1);
-    
+    this.cloth = new Cloth(1);
+
     /* Alias context for syntactic convenience */
     const gl: WebGLRenderingContext = this.ctx;
 
@@ -325,6 +324,12 @@ export class ClothAnimation extends CanvasAnimation {
     this.millis = curr
 
     console.log(deltaT)
+
+    // Do physics-y logic here?
+
+
+    // Update rendering logic
+    this.cloth.update();
 
     const gl: WebGLRenderingContext = this.ctx;
 
