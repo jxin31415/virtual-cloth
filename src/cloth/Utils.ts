@@ -17,10 +17,14 @@ export function repeat<T>(list: T[], times: number): T[] {
   return out;
 }
 
-export function flattenListOfVec(listofVec: Vec3[] | Vec4[]): number[] {
+export function flattenListOfVec(listofVec: Vec3[] | Vec4[], isPoint: boolean): number[] {
   const out: number[] = new Array<number>();
   if (listofVec[0] instanceof Vec3) {
-    (listofVec as Vec3[]).forEach((e) => out.push(e.x, e.y, e.z));
+    if (isPoint) {
+        (listofVec as Vec3[]).forEach((e) => out.push(e.x, e.y, e.z, 1.0));
+    } else {
+        (listofVec as Vec3[]).forEach((e) => out.push(e.x, e.y, e.z, 0.0));
+    }
   } else if (listofVec[0] instanceof Vec4) {
     (listofVec as Vec4[]).forEach((e) => out.push(e.x, e.y, e.z, e.w));
   }

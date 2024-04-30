@@ -1,4 +1,5 @@
 import { Mat3, Mat4, Vec3, Vec4 } from "../lib/TSM.js";
+import { flattenListOfVec } from "./Utils.js";
 
 /*
  * Represents a point within a cloth
@@ -42,7 +43,7 @@ export class Cloth {
   private points: ClothPoint[]; //changed this to be 1-d
   private springs: Vec4[];
 
-  private static width = 10.0;
+  private static width = 1.0;
   private static tensile = 200.0;
   private static structK = Cloth.tensile;
   private static sheerK = Cloth.tensile*Math.sqrt(2);
@@ -55,7 +56,7 @@ export class Cloth {
   private static deltaT = 0.1;
 
 
-  private density;
+  private density : number;
 
   constructor(density: number) {
     let pt_dist = Cloth.width / density;
@@ -188,38 +189,57 @@ export class Cloth {
   private faces : Uint32Array;
   private normals : Float32Array;
 
-  private static normal_map: Float32Array = new Float32Array([
-    0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, 0, 0, -1, 0, // -Z direction
-    0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, // Z direction
-  ]);
+  private findNormal(a: Vec3, b: Vec3, c: Vec3) : Vec3 {
+    let ab = b.copy().subtract(a);
+    let ac = c.copy().subtract(a);
+
+    let n = Vec3.cross(ab, ac);
+    return n.normalize();
+  }
+
+  private addTriangle(a: Vec3, b: Vec3, c: Vec3, rawVerts: Vec3[], rawNormals: Vec3[]) {
+    // Front face
+    rawVerts.push(a);
+    rawVerts.push(b);
+    rawVerts.push(c);
+    let norm = this.findNormal(a, b, c);
+    rawNormals.push(norm); rawNormals.push(norm); rawNormals.push(norm);
+
+    // Back face
+    rawVerts.push(a);
+    rawVerts.push(c);
+    rawVerts.push(b);
+    norm = this.findNormal(a, c, b);
+    rawNormals.push(norm); rawNormals.push(norm); rawNormals.push(norm);
+  }
   
   public update()
-  {    
-    this.vertices = new Float32Array(this.buildCloth());
+  {
+    let rawVerts : Vec3[] = []
+    let rawNormals : Vec3[] = []
+
+    for (let i = 1; i <= this.density; i++) {
+        for (let j = 1; j <= this.density; j++) {
+            let a = this.points[(i-1) * (this.density+1) + j-1].pos;
+            let b = this.points[i * (this.density+1) + j-1].pos;
+            let c = this.points[(i-1) * (this.density+1) + j].pos;
+            let d = this.points[i * (this.density+1) + j].pos;
+            
+            // Triangle #1
+            this.addTriangle(a, b, c, rawVerts, rawNormals);
+            // Triangle #2
+            this.addTriangle(c, b, d, rawVerts, rawNormals);
+        }
+    }
+
+    this.vertices = new Float32Array(flattenListOfVec(rawVerts, true));
 
     this.faces = new Uint32Array(this.vertices.length / 4);
     for(var i : number = 0; i < this.faces.length; i++) {
       this.faces[i] = i;
     }
 
-    this.normals = new Float32Array(this.vertices.length);
-    for(var i : number = 0, j : number = 0; i < this.normals.length; i++, j++) {
-      if (j >= Cloth.normal_map.length) {
-        j = 0;
-      }
-      this.normals[i] = Cloth.normal_map[j];
-    }
-  }
-
-  private buildCloth() {
-    let x = 1.0;
-    let y = 1.0;
-    let z = 1.0;
-    var v = [
-        x, -y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, -x, y, z, 1.0, // Back face
-        x, -y, z, 1.0, x, y, z, 1.0, -x, -y, z, 1.0, x, y, z, 1.0, -x, y, z, 1.0, -x, -y, z, 1.0, // Front face 
-    ];
-    return v;
+    this.normals = new Float32Array(flattenListOfVec(rawNormals, false));
   }
 
   /* Returns a flat Float32Array of the cloth's vertex positions */

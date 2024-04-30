@@ -101,7 +101,7 @@ export class ClothAnimation extends CanvasAnimation {
    * Initialize the Cloth cloth data structure
    */
   public initCloth(): void {
-    this.cloth = new Cloth(1);
+    this.cloth = new Cloth(10);
 
     /* Alias context for syntactic convenience */
     const gl: WebGLRenderingContext = this.ctx;
@@ -323,7 +323,7 @@ export class ClothAnimation extends CanvasAnimation {
     let deltaT = (curr - this.millis) / 1000.0
     this.millis = curr
 
-    console.log(deltaT)
+    // console.log(deltaT)
 
     // Do physics-y logic here?
 
