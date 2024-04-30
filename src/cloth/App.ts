@@ -323,10 +323,9 @@ export class ClothAnimation extends CanvasAnimation {
     let deltaT = (curr - this.millis) / 1000.0
     this.millis = curr
 
-    // console.log(deltaT)
-
-    // Do physics-y logic here?
-
+    // Do physics logic here
+    this.cloth.calcForces();
+    this.cloth.integrateForces(deltaT);
 
     // Update rendering logic
     this.cloth.update();

@@ -8,7 +8,6 @@ export class ClothPoint {
     public pos: Vec3;
     public vel: Vec3;
     public accel: Vec3;
-    // anything else idk
 
     constructor(p: Vec3, v: Vec3) {
         this.pos = p;
@@ -79,8 +78,8 @@ export class Cloth {
     //structural springs
     for (let i = 0; i <= density; i++) {
       for(let j = 0; j <= density-1; j++) {
-        let num1 = i*density + j;
-        let num2 = i*density + j+1;
+        let num1 = i*(density+1) + j;
+        let num2 = i*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, Cloth.structK, pt_dist]));
         // this.springs[num1][num2] = Cloth.structK;
         // this.springs[num2][num1] = Cloth.structK;
@@ -89,8 +88,8 @@ export class Cloth {
 
     for (let i = 0; i <= density-1; i++) {
       for(let j = 0; j <= density; j++) {
-        let num1 = i*density + j;
-        let num2 = (i+1)*density + j;
+        let num1 = i*(density+1) + j;
+        let num2 = (i+1)*(density+1) + j;
         this.springs.push(new Vec4([num1, num2, Cloth.structK, pt_dist]));
         // this.springs[num1][num2] = Cloth.structK;
         // this.springs[num2][num1] = Cloth.structK;
@@ -99,8 +98,8 @@ export class Cloth {
     //shear springs
     for (let i = 0; i <= density-1; i++) {
       for(let j = 0; j <= density-1; j++) {
-        let num1 = i*density + j;
-        let num2 = (i+1)*density + j+1;
+        let num1 = i*(density+1) + j;
+        let num2 = (i+1)*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, Cloth.sheerK, pt_dist*Math.sqrt(2)]));
         // this.springs[num1][num2] = Cloth.sheerK;
         // this.springs[num2][num1] = Cloth.sheerK;
@@ -109,8 +108,8 @@ export class Cloth {
 
     for (let i = 1; i <= density; i++) {
       for(let j = 0; j <= density-1; j++) {
-        let num1 = i*density + j;
-        let num2 = (i-1)*density + j+1;
+        let num1 = i*(density+1) + j;
+        let num2 = (i-1)*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, Cloth.sheerK, pt_dist*Math.sqrt(2)]));
         // this.springs[num1][num2] = Cloth.sheerK;
         // this.springs[num2][num1] = Cloth.sheerK;
@@ -120,8 +119,8 @@ export class Cloth {
     //flexion springs
     for (let i = 0; i <= density; i++) {
       for(let j = 0; j <= density-2; j++) {
-        let num1 = i*density + j;
-        let num2 = i*density + j+2;
+        let num1 = i*(density+1) + j;
+        let num2 = i*(density+1) + j+2;
         this.springs.push(new Vec4([num1, num2, Cloth.flexK, 2*pt_dist]));
         // this.springs[num1][num2] = Cloth.flexK;
         // this.springs[num2][num1] = Cloth.flexK;
@@ -130,8 +129,8 @@ export class Cloth {
 
     for (let i = 0; i <= density-2; i++) {
       for(let j = 0; j <= density; j++) {
-        let num1 = i*density + j;
-        let num2 = (i+2)*density + j;
+        let num1 = i*(density+1) + j;
+        let num2 = (i+2)*(density+1) + j;
         this.springs.push(new Vec4([num1, num2, Cloth.flexK, 2*pt_dist]));
         // this.springs[num1][num2] = Cloth.flexK;
         // this.springs[num2][num1] = Cloth.flexK;
@@ -141,10 +140,10 @@ export class Cloth {
 
   public calcForces(){
     // reset, gravity, drag, wind accelerations
-    let grav = new Vec3([0,-9.8, 0]); // TODO: NOT SURE IF CORRECT, ALSO MUST CHANGE MAGNITUDE
+    let grav = new Vec3([0,Cloth.gravity, 0]); // TODO: NOT SURE IF CORRECT, ALSO MUST CHANGE MAGNITUDE
     for (let i = 0; i <= this.density; i++) {
       for(let j = 0; j <= this.density; j++) {
-        let num1 = i*this.density+j;
+        let num1 = i*(this.density+1)+j;
         let p1 = this.points[num1];
         p1.resetA();
 
@@ -177,7 +176,7 @@ export class Cloth {
   public integrateForces(deltaT: number){
     for (let i = 0; i <= this.density; i++) {
       for(let j = 0; j <= this.density; j++) {
-        let num1 = i*this.density+j;
+        let num1 = i*(this.density+1)+j;
         let p1 = this.points[num1];
 
         // TODO: BETTER INTEGRATION METHODS
