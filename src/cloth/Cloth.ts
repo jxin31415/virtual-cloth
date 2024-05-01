@@ -60,13 +60,14 @@ export class Cloth {
   private static width = 1.0;
   private static tensile = 2.0;
   private static structK = Cloth.tensile;
-  private static sheerK = Cloth.tensile*Math.sqrt(2);
-  private static flexK = Cloth.tensile*2;
+  private static sheerK = Cloth.tensile/Math.sqrt(2);
+  private static flexK = Cloth.tensile/2;
+  private static springDamp = 0.5;
 
   private static drag = 1.3;
   private static gravity = -9.8 / 1000.0;
   private static HAS_WIND = false;
-  private static wind = 1.0;
+  private static wind = 0.005;
   private static deltaT = 0.1;
 
 
@@ -156,7 +157,7 @@ export class Cloth {
 
   public calcForces(){
     // reset, gravity, drag, wind accelerations
-    let grav = new Vec3([0,Cloth.gravity, 0]); // TODO: NOT SURE IF CORRECT, ALSO MUST CHANGE MAGNITUDE
+    let grav = new Vec3([0,Cloth.gravity, 0]); // TODO: CHANGE MAGNITUDE
     for (let i = 0; i <= this.density; i++) {
       for(let j = 0; j <= this.density; j++) {
         let num1 = i*(this.density+1)+j;
@@ -167,7 +168,8 @@ export class Cloth {
         p1.accel.add(p1.vel.copy().scale(-1*Cloth.drag));
 
         if(Cloth.HAS_WIND){
-          p1.accel.add(new Vec3([0.0, 0.0, Math.random()*Cloth.wind]));
+          // p1.accel.add(new Vec3([0.0, 0.0, Math.random()*Cloth.wind]));
+          p1.accel.add(new Vec3([Math.sin(p1.pos.x*p1.pos.y*Cloth.deltaT), Math.cos(p1.pos.z*Cloth.deltaT), Math.sin(Math.cos(5*p1.pos.x*p1.pos.y*p1.pos.z))]).scale(Cloth.wind));
         }
       }
     }
@@ -180,9 +182,17 @@ export class Cloth {
       let x = this.springs[i].w;
       let pos1 = p1.pos;
       let pos2 = p2.pos;
-      let dir = pos1.copy().subtract(pos2).normalize();  
+      let diff = pos1.copy().subtract(pos2);
+      let dir = diff.copy().normalize();  
       let dist = Vec3.distance(pos1, pos2);
+      
+      // let dampingForce = diff.scale(-Cloth.springDamp);
+      // let acceleration = dir.scale(-1.0*k*(dist-x)).add(dampingForce);
+
       let acceleration = dir.scale(-1.0*k*(dist-x));
+
+
+
       p1.accel.add(acceleration);
       p2.accel.add(acceleration.scale(-1));
     }
