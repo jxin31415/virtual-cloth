@@ -102,6 +102,7 @@ export class ClothAnimation extends CanvasAnimation {
    */
   public initCloth(): void {
     this.cloth = new Cloth(10);
+    this.gui.setCloth(this.cloth);
 
     /* Alias context for syntactic convenience */
     const gl: WebGLRenderingContext = this.ctx;

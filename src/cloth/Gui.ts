@@ -181,6 +181,10 @@ export class GUI implements IGUI {
         this.camera.offset(this.camera.right(), GUI.panSpeed, true);
         break;
       }
+      case "KeyP": {
+        this.cloth.toggleWind();
+        break;
+      }
       case "ArrowLeft": {
         this.camera.roll(GUI.rollSpeed, false);
         break;
@@ -231,5 +235,9 @@ export class GUI implements IGUI {
     canvas.addEventListener("contextmenu", (event: any) =>
       event.preventDefault()
     );
+  }
+
+  public setCloth(c: Cloth){
+    this.cloth = c;
   }
 }

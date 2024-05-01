@@ -58,18 +58,18 @@ export class Cloth {
   private springs: Vec4[];
 
   private static width = 1.0;
-  private static tensile = 2.0;
-  private static structK = Cloth.tensile;
-  private static sheerK = Cloth.tensile/Math.sqrt(2);
-  private static flexK = Cloth.tensile/2;
+  private tensile = 2.0;
+  private structK = this.tensile;
+  private sheerK = this.tensile/Math.sqrt(2);
+  private flexK = this.tensile/2;
   private static springDamp = 0.5;
 
   private static drag = 1.3;
   private static gravity = -9.8 / 1000.0;
-  private static HAS_WIND = false;
   private static wind = 0.005;
   private static deltaT = 0.1;
 
+  private HAS_WIND = false;
 
   private density : number;
 
@@ -82,12 +82,12 @@ export class Cloth {
     for (let i = 0; i <= density; i++) {
       for(let j = 0; j <= density; j++) {
           this.points.push(new ClothPoint(
-              new Vec3([i * pt_dist, j * pt_dist, j * pt_dist]), // use this for actual setup
+            new Vec3([i * pt_dist, j * pt_dist, i * pt_dist * 0.5]), // use this for actual setup
 
             // this is here for debugging + it looks cool
-            //   new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, j * pt_dist * 0.5 + Math.random() * 0.1]),
-              new Vec3([0, 0, 0]),
-              ((i==0||i==density)&&j==0)
+            // new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, i * pt_dist * 0.5 + Math.random() * 0.1]),
+            new Vec3([0, 0, 0]),
+            ((i==0||i==density)&&j==density)
           ));
       }
     }
@@ -97,7 +97,7 @@ export class Cloth {
       for(let j = 0; j <= density-1; j++) {
         let num1 = i*(density+1) + j;
         let num2 = i*(density+1) + j+1;
-        this.springs.push(new Vec4([num1, num2, Cloth.structK, pt_dist]));
+        this.springs.push(new Vec4([num1, num2, this.structK, pt_dist]));
         // this.springs[num1][num2] = Cloth.structK;
         // this.springs[num2][num1] = Cloth.structK;
       }
@@ -107,7 +107,7 @@ export class Cloth {
       for(let j = 0; j <= density; j++) {
         let num1 = i*(density+1) + j;
         let num2 = (i+1)*(density+1) + j;
-        this.springs.push(new Vec4([num1, num2, Cloth.structK, pt_dist]));
+        this.springs.push(new Vec4([num1, num2, this.structK, pt_dist]));
         // this.springs[num1][num2] = Cloth.structK;
         // this.springs[num2][num1] = Cloth.structK;
       }
@@ -117,7 +117,7 @@ export class Cloth {
       for(let j = 0; j <= density-1; j++) {
         let num1 = i*(density+1) + j;
         let num2 = (i+1)*(density+1) + j+1;
-        this.springs.push(new Vec4([num1, num2, Cloth.sheerK, pt_dist*Math.sqrt(2)]));
+        this.springs.push(new Vec4([num1, num2, this.sheerK, pt_dist*Math.sqrt(2)]));
         // this.springs[num1][num2] = Cloth.sheerK;
         // this.springs[num2][num1] = Cloth.sheerK;
       }
@@ -127,7 +127,7 @@ export class Cloth {
       for(let j = 0; j <= density-1; j++) {
         let num1 = i*(density+1) + j;
         let num2 = (i-1)*(density+1) + j+1;
-        this.springs.push(new Vec4([num1, num2, Cloth.sheerK, pt_dist*Math.sqrt(2)]));
+        this.springs.push(new Vec4([num1, num2, this.sheerK, pt_dist*Math.sqrt(2)]));
         // this.springs[num1][num2] = Cloth.sheerK;
         // this.springs[num2][num1] = Cloth.sheerK;
       }
@@ -138,7 +138,7 @@ export class Cloth {
       for(let j = 0; j <= density-2; j++) {
         let num1 = i*(density+1) + j;
         let num2 = i*(density+1) + j+2;
-        this.springs.push(new Vec4([num1, num2, Cloth.flexK, 2*pt_dist]));
+        this.springs.push(new Vec4([num1, num2, this.flexK, 2*pt_dist]));
         // this.springs[num1][num2] = Cloth.flexK;
         // this.springs[num2][num1] = Cloth.flexK;
       }
@@ -148,7 +148,7 @@ export class Cloth {
       for(let j = 0; j <= density; j++) {
         let num1 = i*(density+1) + j;
         let num2 = (i+2)*(density+1) + j;
-        this.springs.push(new Vec4([num1, num2, Cloth.flexK, 2*pt_dist]));
+        this.springs.push(new Vec4([num1, num2, this.flexK, 2*pt_dist]));
         // this.springs[num1][num2] = Cloth.flexK;
         // this.springs[num2][num1] = Cloth.flexK;
       }
@@ -167,7 +167,7 @@ export class Cloth {
         p1.accel.add(grav);
         p1.accel.add(p1.vel.copy().scale(-1*Cloth.drag));
 
-        if(Cloth.HAS_WIND){
+        if(this.HAS_WIND){
           // p1.accel.add(new Vec3([0.0, 0.0, Math.random()*Cloth.wind]));
           p1.accel.add(new Vec3([Math.sin(p1.pos.x*p1.pos.y*Cloth.deltaT), Math.cos(p1.pos.z*Cloth.deltaT), Math.sin(Math.cos(5*p1.pos.x*p1.pos.y*p1.pos.z))]).scale(Cloth.wind));
         }
@@ -297,4 +297,15 @@ export class Cloth {
     return ret;    
   }
   
+  public toggleWind() {
+    this.HAS_WIND = !this.HAS_WIND;
+  }
+
+  public setTensile(t: number){
+    this.tensile = t;
+
+    this.structK = this.tensile;
+    this.sheerK = this.tensile/Math.sqrt(2);
+    this.flexK = this.tensile/2;
+  }
 }
