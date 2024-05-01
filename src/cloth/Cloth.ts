@@ -41,6 +41,7 @@ export class ClothPoint {
         let temp = this.pos.copy()
         this.pos = this.accel.copy().scale(time*time).add(this.pos.copy().scale(2)).subtract(this.prevpos);
         this.prevpos = temp;
+        this.vel = this.pos.copy().subtract(this.prevpos).scale(1/time);
       }
     }
 }
@@ -64,12 +65,12 @@ export class Cloth {
   private flexK = this.tensile/2;
   private static springDamp = 0.5;
 
-  private static drag = 1.3;
+  private drag = 0.03;
   private static gravity = -9.8 / 1000.0;
-  private static wind = 0.005;
-  private static deltaT = 0.1;
+  private wind = 0.0;
+  private deltaT = 0.1;
 
-  private HAS_WIND = false;
+  private HAS_WIND = true;
 
   private density : number;
 
@@ -156,6 +157,9 @@ export class Cloth {
   }
 
   public calcForces(){
+    if(this.deltaT == 0){
+      return;
+    }
     // reset, gravity, drag, wind accelerations
     let grav = new Vec3([0,Cloth.gravity, 0]); // TODO: CHANGE MAGNITUDE
     for (let i = 0; i <= this.density; i++) {
@@ -165,11 +169,11 @@ export class Cloth {
         p1.resetA();
 
         p1.accel.add(grav);
-        p1.accel.add(p1.vel.copy().scale(-1*Cloth.drag));
+        p1.accel.add(p1.vel.copy().scale(-1*this.drag));
 
         if(this.HAS_WIND){
           // p1.accel.add(new Vec3([0.0, 0.0, Math.random()*Cloth.wind]));
-          p1.accel.add(new Vec3([Math.sin(p1.pos.x*p1.pos.y*Cloth.deltaT), Math.cos(p1.pos.z*Cloth.deltaT), Math.sin(Math.cos(5*p1.pos.x*p1.pos.y*p1.pos.z))]).scale(Cloth.wind));
+          p1.accel.add(new Vec3([Math.sin(p1.pos.x*p1.pos.y*this.deltaT), Math.cos(p1.pos.z*this.deltaT), Math.sin(Math.cos(5*p1.pos.x*p1.pos.y*p1.pos.z))]).scale(this.wind));
         }
       }
     }
@@ -200,13 +204,16 @@ export class Cloth {
   }
 
   public integrateForces(deltaT: number){
+    if(this.deltaT == 0){
+      return;
+    }
     for (let i = 0; i <= this.density; i++) {
       for(let j = 0; j <= this.density; j++) {
         let num1 = i*(this.density+1)+j;
         let p1 = this.points[num1];
 
         // TODO: BETTER INTEGRATION METHODS
-        p1.verletIntegrate(Cloth.deltaT);
+        p1.verletIntegrate(this.deltaT);
       }
     }
   }
@@ -307,5 +314,21 @@ export class Cloth {
     this.structK = this.tensile;
     this.sheerK = this.tensile/Math.sqrt(2);
     this.flexK = this.tensile/2;
+
+    console.log(t,this.tensile);
+  }
+
+  public setWind(w: number){
+    this.wind = w;
+    console.log(w,this.wind);
+  }
+
+  public setDeltaT(t: number){
+    this.deltaT = t;
+    console.log(t,this.deltaT);
+  }
+
+  public setDrag(d: number){
+    this.drag = d;
   }
 }

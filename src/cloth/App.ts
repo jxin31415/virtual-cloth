@@ -321,8 +321,8 @@ export class ClothAnimation extends CanvasAnimation {
    */
   public draw(): void {
     let curr = new Date().getTime();
-    let deltaT = (curr - this.millis) / 1000.0
-    this.millis = curr
+    let deltaT = (curr - this.millis) / 1000.0;
+    this.millis = curr;
 
     // Do physics logic here
     this.cloth.calcForces();

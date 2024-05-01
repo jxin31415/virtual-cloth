@@ -235,6 +235,31 @@ export class GUI implements IGUI {
     canvas.addEventListener("contextmenu", (event: any) =>
       event.preventDefault()
     );
+
+
+    const tensileSlider = document.getElementById("tensileSlider") as HTMLInputElement;
+    tensileSlider.addEventListener("input", () => {
+      const tensile = parseFloat(tensileSlider.value);
+      this.cloth.setTensile(tensile);
+    });
+
+    const windSlider = document.getElementById("windSlider") as HTMLInputElement;
+    windSlider.addEventListener("input", () => {
+      const wind = parseFloat(windSlider.value);
+      this.cloth.setWind(wind);
+    });
+
+    const tSlider = document.getElementById("deltaTSlider") as HTMLInputElement;
+    tSlider.addEventListener("input", () => {
+      const t = parseFloat(tSlider.value);
+      this.cloth.setDeltaT(t);
+    });
+
+    const dragSlider = document.getElementById("dragSlider") as HTMLInputElement;
+    dragSlider.addEventListener("input", () => {
+      const d = parseFloat(dragSlider.value);
+      this.cloth.setDrag(d);
+    });
   }
 
   public setCloth(c: Cloth){
