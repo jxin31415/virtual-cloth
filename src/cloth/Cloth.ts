@@ -32,6 +32,12 @@ export class ClothPoint {
       if(!this.fixed){
         this.pos.add(this.vel.copy().scale(time));
         this.vel.add(this.accel.copy().scale(time));
+        
+        this.floorCollision();
+
+        if(this.hasSphere){
+          this.sphereCollision(new Vec3([0, -2, 0]), 1);
+        }
       }
     }
 
@@ -62,9 +68,20 @@ export class ClothPoint {
     public sphereCollision(sphere: Vec3, radius: number){
       let vect = this.pos.copy().subtract(sphere);
       let distance = vect.length();
-      if(distance < radius*radius){
+      if(distance < radius){
         let project = vect.normalize().scale(radius);
         this.pos = project.add(sphere);
+      }
+    }
+
+    public pointCollision(point: ClothPoint, radius: number){
+      let sphere = point.pos;
+      let vect = this.pos.copy().subtract(sphere);
+      let distance = vect.length();
+      if(distance < radius){
+        let project = vect.normalize().scale(-1/2*distance);
+        this.pos.add(project);
+        point.pos.subtract(project);
       }
     }
 }
@@ -94,6 +111,7 @@ export class Cloth {
   private deltaT = 0.1;
 
   private HAS_WIND = true;
+  private HAS_SELF_COLLISIONS = false;
 
   private density : number;
 
@@ -232,6 +250,15 @@ export class Cloth {
         let p1 = this.points[num1];
 
         p1.verletIntegrate(this.deltaT);
+      }
+    }
+
+    if(this.HAS_SELF_COLLISIONS){
+      let numP = this.points.length;
+      for (let i = 0; i <numP; i++) {
+        for(let j = i+1; j <numP; j++) {
+          this.points[i].pointCollision(this.points[j], 0.01);
+        }
       }
     }
   }

@@ -19,8 +19,8 @@ The primary interesting physical principle we use is *Hooke's Law*, which descri
 
 Then, for each point, we can maintain its acceleration, velocity, and position. To simulate the system, we'll simply step through time (using very small timesteps) and use Newton's second law (`F = ma`) to update the acceleration, and some kinematic equations to update the velocity and position.
 
-### Integrators
-There are a few different ways of doing this calculation. (talk about integrators here)
+### Integration Estimators
+There are a few different ways of doing this calculation. We first tried to use Euler's method to estimate the effects of acceleration and velocity on each particle. This turned out to be incredibly unstable. We then implemented Verlet integration, which ended up being stable enough to use for all of our calculations.
 
 ### Dampening Term
 However, even this is unsatisfactory -- there will always be some error left in the system. In order to correct for this error, and to make the system more realistic by modeling *energy loss*, we'll also add a dampening term. That is, we'll add a force that resists the particle's current direction of motion. Without this, we find that the error compounds and causes the system to quickly spiral out of control (it appears to implode or explode). Even without any error, a spring that keeps bouncing forever is unrealistic, justifying the use of this dampening term.
@@ -40,7 +40,7 @@ We render the system by converting the particle system into a triangle mesh. Sin
 We use a similar method to the Menger sponge, where we'll duplicate points when they need to be used for multiple triangles. Normals are calculated by finding the plane that defines the triangle. A future extension would be to make this normal calculation smoother.
 
 ## Collisions
-We do some rudimentary collision tracking, which...
+We do some rudimentary collision tracking, such as colliding with the floor or with a sphere.
 
 ## Scenes
 We have some different scenes, they can be set using the number keys.
@@ -49,11 +49,17 @@ We have some different scenes, they can be set using the number keys.
 2. Cloth is fixed by all four corners
 3. Cloth is fixed by one corner
 4. Cloth has no fixed points and falls to the floor
-5. Cloth is horizontal, and has no fixed points. It collides onto a sphere below it.
+5. Cloth is horizontal, and has no fixed points. It collides onto a sphere below it. This scene is particularly interesting with wind.
 6. Cloth is horzontal and fixed at a center point.
 
 ## Limitations
-Not a completely realistic rendering of cloth.
+- Not a completely realistic rendering of cloth.
+- Some constants need to be tuned for different densities of cloth points.
+
+## References
+https://www.youtube.com/watch?v=aDzMda7cPxI
+https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/
+https://graphics.stanford.edu/~mdfisher/cloth.html
 
 ## Extra Credit
 (10 pts) We have both completed the online course instructor survey.
