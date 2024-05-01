@@ -191,7 +191,7 @@ export class Cloth {
 
   }
 
-  public integrateForces(deltaT: number){
+  public integrateForces(){
     if(this.deltaT == 0){
       return;
     }

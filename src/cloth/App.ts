@@ -321,12 +321,12 @@ export class ClothAnimation extends CanvasAnimation {
    */
   public draw(): void {
     let curr = new Date().getTime();
-    let deltaT = (curr - this.millis) / 1000.0;
+    // let deltaT = (curr - this.millis) / 1000.0;
     this.millis = curr;
 
     // Do physics logic here
     this.cloth.calcForces();
-    this.cloth.integrateForces(deltaT);
+    this.cloth.integrateForces();
 
     // Update rendering logic
     this.cloth.update();
