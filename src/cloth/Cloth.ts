@@ -99,8 +99,6 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = i*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, this.structK, pt_dist]));
-        // this.springs[num1][num2] = Cloth.structK;
-        // this.springs[num2][num1] = Cloth.structK;
       }
     }
 
@@ -109,8 +107,6 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i+1)*(density+1) + j;
         this.springs.push(new Vec4([num1, num2, this.structK, pt_dist]));
-        // this.springs[num1][num2] = Cloth.structK;
-        // this.springs[num2][num1] = Cloth.structK;
       }
     }
     //shear springs
@@ -119,8 +115,6 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i+1)*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, this.sheerK, pt_dist*Math.sqrt(2)]));
-        // this.springs[num1][num2] = Cloth.sheerK;
-        // this.springs[num2][num1] = Cloth.sheerK;
       }
     }
 
@@ -129,8 +123,6 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i-1)*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, this.sheerK, pt_dist*Math.sqrt(2)]));
-        // this.springs[num1][num2] = Cloth.sheerK;
-        // this.springs[num2][num1] = Cloth.sheerK;
       }
     }
 
@@ -140,8 +132,6 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = i*(density+1) + j+2;
         this.springs.push(new Vec4([num1, num2, this.flexK, 2*pt_dist]));
-        // this.springs[num1][num2] = Cloth.flexK;
-        // this.springs[num2][num1] = Cloth.flexK;
       }
     }
 
@@ -150,8 +140,6 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i+2)*(density+1) + j;
         this.springs.push(new Vec4([num1, num2, this.flexK, 2*pt_dist]));
-        // this.springs[num1][num2] = Cloth.flexK;
-        // this.springs[num2][num1] = Cloth.flexK;
       }
     }
   }
