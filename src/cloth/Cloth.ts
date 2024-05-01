@@ -320,12 +320,12 @@ export class Cloth {
 
   public setWind(w: number){
     this.wind = w;
-    console.log(w,this.wind);
+    // console.log(w,this.wind);
   }
 
   public setDeltaT(t: number){
     this.deltaT = t;
-    console.log(t,this.deltaT);
+    // console.log(t,this.deltaT);
   }
 
   public setDrag(d: number){
