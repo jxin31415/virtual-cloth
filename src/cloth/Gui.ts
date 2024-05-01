@@ -56,7 +56,7 @@ export class GUI implements IGUI {
     this.cloth = cloth;
     this.animation = animation;
 
-	this.reset();
+	  this.reset();
 
     this.registerEventListeners(canvas);
   }
