@@ -40,5 +40,18 @@ We use a similar method to the Menger sponge, where we'll duplicate points when 
 ## Collisions
 We do some rudimentary collision tracking, which...
 
+## Scenes
+We have some different scenes, they can be set using the number keys.
+
+1. Cloth is fixed by the two corners at the top
+2. Cloth is fixed by all four corners
+3. Cloth is fixed by one corner
+4. Cloth has no fixed points and falls to the floor
+5. Cloth is horizontal, and has no fixed points. It collides onto a sphere below it.
+6. Cloth is horzontal and fixed at a center point.
+
+## Limitations
+Not a completely realistic rendering of cloth.
+
 ## Extra Credit
 (10 pts) We have both completed the online course instructor survey.

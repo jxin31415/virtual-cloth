@@ -11,12 +11,15 @@ export class ClothPoint {
     public accel: Vec3;
     public fixed: boolean; // top two corner points are fixed maybe
 
+    public hasSphere: boolean;
+
     constructor(p: Vec3, v: Vec3, f: boolean) {
         this.pos = p;
         this.prevpos = p;
         this.vel = v;
         this.accel = new Vec3([0, 0, 0]);
         this.fixed = f;
+        this.hasSphere = false;
     }
 
     public resetA(){
@@ -42,6 +45,26 @@ export class ClothPoint {
         this.pos = this.accel.copy().scale(time*time).add(this.pos.copy().scale(2)).subtract(this.prevpos);
         this.prevpos = temp;
         this.vel = this.pos.copy().subtract(this.prevpos).scale(1/time);
+        this.floorCollision();
+
+        if(this.hasSphere){
+          this.sphereCollision(new Vec3([0, -2, 0]), 1);
+        }
+      }
+    }
+
+    public floorCollision(){
+      if(this.pos.y <= -1.99){
+        this.pos.y = -1.99;
+      }
+    }
+
+    public sphereCollision(sphere: Vec3, radius: number){
+      let vect = this.pos.copy().subtract(sphere);
+      let distance = vect.length();
+      if(distance < radius*radius){
+        let project = vect.normalize().scale(radius);
+        this.pos = project.add(sphere);
       }
     }
 }
@@ -59,13 +82,13 @@ export class Cloth {
   private springs: Vec4[];
 
   private static width = 1.0;
-  private tensile = 2.0;
-  private structK = this.tensile;
-  private sheerK = this.tensile/Math.sqrt(2);
-  private flexK = this.tensile/2;
+  private tensile;
+  private structK;
+  private sheerK;
+  private flexK;
   private static springDamp = 0.5;
 
-  private drag = 0.03;
+  private drag;
   private static gravity = -9.8 / 1000.0;
   private wind = 0.0;
   private deltaT = 0.1;
@@ -77,6 +100,14 @@ export class Cloth {
   constructor(density: number) {
     let pt_dist = Cloth.width / density;
     this.density = density;
+
+    this.tensile = 20/this.density;
+    this.structK = this.tensile;
+    this.sheerK = this.tensile/Math.sqrt(2);
+    this.flexK = this.tensile/2;
+    
+    this.drag = 0.3/density;
+
     // Initialize grid of points
     this.points = [];
     this.springs = [];
@@ -200,7 +231,6 @@ export class Cloth {
         let num1 = i*(this.density+1)+j;
         let p1 = this.points[num1];
 
-        // TODO: BETTER INTEGRATION METHODS
         p1.verletIntegrate(this.deltaT);
       }
     }
@@ -318,5 +348,34 @@ export class Cloth {
 
   public setDrag(d: number){
     this.drag = d;
+  }
+
+  public setScene(level: number){
+    let pt_dist = Cloth.width / this.density;
+    for (let i = 0; i <= this.density; i++) {
+      for(let j = 0; j <= this.density; j++) {
+        let num1 = i*(this.density+1)+j;
+
+        if(level < 5){
+          this.points[num1].pos = new Vec3([i * pt_dist, j * pt_dist, i * pt_dist * 0.5]);
+          this.points[num1].hasSphere = false;
+        }else{
+          this.points[num1].pos = new Vec3([i * pt_dist - 0.5, 1, j * pt_dist - 0.5]);
+          this.points[num1].hasSphere = true;
+        }
+        // this is here for debugging + it looks cool
+        // new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, i * pt_dist * 0.5 + Math.random() * 0.1]),
+
+        this.points[num1].prevpos = this.points[num1].pos;
+        this.points[num1].vel = new Vec3([0, 0, 0]);
+        this.points[num1].accel = new Vec3([0, 0, 0]);
+
+        this.points[num1].fixed = level==1 ? ((i==0||i==this.density)&&j==this.density) : //top 2 points
+          level==2 ? ((i==0||i==this.density)&&(j==0||j==this.density)) : //all 4 points
+          level==3 ? (i==0&&j==this.density) : // 1 point
+          level==6 ? (i==this.density/2&&j==this.density/2):
+          false;
+      }
+    }
   }
 }

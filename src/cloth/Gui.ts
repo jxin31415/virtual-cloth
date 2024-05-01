@@ -165,6 +165,30 @@ export class GUI implements IGUI {
      */
 
     switch (key.code) {
+      case "Digit1": {
+        this.cloth.setScene(1);
+        break;
+      }
+      case "Digit2": {
+        this.cloth.setScene(2);
+        break;
+      }
+      case "Digit3": {
+        this.cloth.setScene(3);
+        break;
+      }    
+      case "Digit4": {
+        this.cloth.setScene(4);
+        break;
+      }    
+      case "Digit5": {
+        this.cloth.setScene(5);
+        break;
+      }    
+      case "Digit6": {
+        this.cloth.setScene(6);
+        break;
+      }    
       case "KeyW": {
         this.camera.offset(this.camera.forward().negate(), GUI.zoomSpeed, true);
         break;
