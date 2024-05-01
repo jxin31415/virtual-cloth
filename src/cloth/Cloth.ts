@@ -101,12 +101,12 @@ export class Cloth {
     let pt_dist = Cloth.width / density;
     this.density = density;
 
-    this.tensile = 20/this.density;
+    this.tensile = 300/this.density;
     this.structK = this.tensile;
     this.sheerK = this.tensile/Math.sqrt(2);
     this.flexK = this.tensile/2;
     
-    this.drag = 0.3/density;
+    this.drag = 2.0/density;
 
     // Initialize grid of points
     this.points = [];
