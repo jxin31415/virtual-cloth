@@ -87,7 +87,7 @@ export class Cloth {
             // this is here for debugging + it looks cool
           new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, i * pt_dist * 0.5 + Math.random() * 0.1]),
             new Vec3([0, 0, 0]),
-            ((i==0||i==density)&&j==0)
+            ((i==0||i==density)&&j==density)
           ));
       }
     }
