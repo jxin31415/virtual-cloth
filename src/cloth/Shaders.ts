@@ -40,7 +40,7 @@ export let defaultFSText = `
 
         float diffuse = clamp(dot(ldNorm, nNorm), 0.0, 1.0);
 
-        vec4 color = vec4(abs(normal[0]) * diffuse, abs(normal[1]) * diffuse, abs(normal[2]) * diffuse, 1.0);
+        vec4 color = vec4(abs(normal[0]) * diffuse * 0.5, 0, 1.0, 1.0);
         gl_FragColor = color;
 
         // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);

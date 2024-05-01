@@ -81,10 +81,10 @@ export class Cloth {
     for (let i = 0; i <= density; i++) {
       for(let j = 0; j <= density; j++) {
           this.points.push(new ClothPoint(
-            //   new Vec3([i * pt_dist, j * pt_dist, 0.0]), // use this for actual setup
+            //   new Vec3([i * pt_dist, j * pt_dist, i * pt_dist * 0.5]), // use this for actual setup
 
             // this is here for debugging + it looks cool
-              new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, 0.0 + Math.random() * 0.1]),
+              new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, i * pt_dist * 0.5 + Math.random() * 0.1]),
               new Vec3([0, 0, 0]),
               ((i==0||i==density)&&j==0)
           ));
