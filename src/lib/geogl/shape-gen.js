@@ -41,13 +41,18 @@ export function sphere(density){
 
 			if(ring === 0){
 				triangles.push([thisP, nextRingNextP, nextRingP]);
+                triangles.push([thisP, nextRingP, nextRingNextP]);
 			}
 			if(ring === density - 1){
 				triangles.push([thisP, nextP, nextRingP]);
+                triangles.push([thisP, nextRingP, nextP]);
 			}
 			if(ring > 0 && ring < density - 1 && density > 2){
 				triangles.push([thisP, nextRingNextP, nextRingP])
+                triangles.push([thisP, nextRingP, nextRingNextP])
+
 				triangles.push([thisP, nextP, nextRingNextP])
+                triangles.push([thisP, nextRingNextP, nextP])
 			}
 		}
 		if(ring === 0){

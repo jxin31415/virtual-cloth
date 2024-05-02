@@ -60,7 +60,18 @@ export class GUI implements IGUI {
 
     this.level = 1;
 
-	  this.reset();
+    this.reset();
+
+    /* Create camera setup */
+    this.camera = new Camera(
+        new Vec3([3, 0, -3]),
+        new Vec3([0, 0, 0]),
+        new Vec3([0, 1, 0]),
+        45,
+        this.width / this.height,
+        0.1,
+        1000.0
+    );
 
     this.registerEventListeners(canvas);
   }
@@ -71,16 +82,6 @@ export class GUI implements IGUI {
   public reset(): void {
     this.fps = false;
     this.dragging = false;
-    /* Create camera setup */
-    this.camera = new Camera(
-      new Vec3([3, 0, -3]),
-      new Vec3([0, 0, 0]),
-      new Vec3([0, 1, 0]),
-      45,
-      this.width / this.height,
-      0.1,
-      1000.0
-    );
   }
 
   /**
@@ -213,10 +214,6 @@ export class GUI implements IGUI {
       }
       case "KeyD": {
         this.camera.offset(this.camera.right(), GUI.panSpeed, true);
-        break;
-      }
-      case "KeyR": {
-        this.reset();
         break;
       }
       case "KeyP": {

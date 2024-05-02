@@ -72,6 +72,7 @@ export class ClothPoint {
     }
 
     public sphereCollision(sphere: Vec3, radius: number){
+      radius += 0.01; // deal with imprecision
       let vect = this.pos.copy().subtract(sphere);
       let distance = vect.length();
       if(distance < radius){
