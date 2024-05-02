@@ -1,6 +1,7 @@
 Names: Jimmy Xin (jjx88), Gavin Wang (gw7775)
 
 < need to add citations >
+< make it explicit how much of the code is ours and how much is taken from elsewhere >
 
 # Final Project
 For our final project, we implemented a *mass-spring system* that we use to simulate *cloth*.

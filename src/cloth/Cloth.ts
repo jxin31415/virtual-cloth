@@ -11,6 +11,8 @@ export class ClothPoint {
     public accel: Vec3;
     public fixed: boolean; // top two corner points are fixed maybe
 
+    public normal: Vec3;
+
     public hasSphere: boolean;
 
     constructor(p: Vec3, v: Vec3, f: boolean) {
@@ -301,38 +303,79 @@ export class Cloth {
     return n.normalize();
   }
 
-  private addTriangle(a: Vec3, b: Vec3, c: Vec3, rawVerts: Vec3[], rawNormals: Vec3[]) {
-    // Front face
-    rawVerts.push(a);
-    rawVerts.push(b);
-    rawVerts.push(c);
-    let norm = this.findNormal(a, b, c);
-    rawNormals.push(norm); rawNormals.push(norm); rawNormals.push(norm);
-
-    // Back face
-    rawVerts.push(a);
-    rawVerts.push(c);
-    rawVerts.push(b);
-    norm = this.findNormal(a, c, b);
-    rawNormals.push(norm); rawNormals.push(norm); rawNormals.push(norm);
-  }
-  
   public update()
   {
     let rawVerts : Vec3[] = []
     let rawNormals : Vec3[] = []
 
+    for (let i = 0; i < this.points.length; i++) {
+        this.points[i].normal = new Vec3([0, 0, 0]);
+    }
+
     for (let i = 1; i <= this.density; i++) {
         for (let j = 1; j <= this.density; j++) {
-            let a = this.points[(i-1) * (this.density+1) + j-1].pos;
-            let b = this.points[i * (this.density+1) + j-1].pos;
-            let c = this.points[(i-1) * (this.density+1) + j].pos;
-            let d = this.points[i * (this.density+1) + j].pos;
+            let a = (i-1) * (this.density+1) + j-1;
+            let b = i * (this.density+1) + j-1;
+            let c = (i-1) * (this.density+1) + j;
+            let d = i * (this.density+1) + j;
+            
+            let norm = this.findNormal(this.points[a].pos, this.points[b].pos, this.points[c].pos);
+            this.points[a].normal.add(norm);
+            this.points[b].normal.add(norm);
+            this.points[c].normal.add(norm);
+
+            norm = this.findNormal(this.points[c].pos, this.points[b].pos, this.points[d].pos);
+            this.points[c].normal.add(norm);
+            this.points[b].normal.add(norm);
+            this.points[d].normal.add(norm);
+        }
+    }
+
+    for (let i = 0; i < this.points.length; i++) {
+        this.points[i].normal.normalize();
+    }
+
+    for (let i = 1; i <= this.density; i++) {
+        for (let j = 1; j <= this.density; j++) {
+            let a = (i-1) * (this.density+1) + j-1;
+            let b = i * (this.density+1) + j-1;
+            let c = (i-1) * (this.density+1) + j;
+            let d = i * (this.density+1) + j;
             
             // Triangle #1
-            this.addTriangle(a, b, c, rawVerts, rawNormals);
+            // Front face
+            rawVerts.push(this.points[a].pos);
+            rawVerts.push(this.points[b].pos);
+            rawVerts.push(this.points[c].pos);
+            rawNormals.push(this.points[a].normal);
+            rawNormals.push(this.points[b].normal);
+            rawNormals.push(this.points[c].normal);
+
+            // Back face
+            rawVerts.push(this.points[a].pos);
+            rawVerts.push(this.points[c].pos);
+            rawVerts.push(this.points[b].pos);
+            rawNormals.push(this.points[a].normal.scale(-1));
+            rawNormals.push(this.points[c].normal.scale(-1));
+            rawNormals.push(this.points[b].normal.scale(-1));
+
+            
             // Triangle #2
-            this.addTriangle(c, b, d, rawVerts, rawNormals);
+            // Front face
+            rawVerts.push(this.points[c].pos);
+            rawVerts.push(this.points[b].pos);
+            rawVerts.push(this.points[d].pos);
+            rawNormals.push(this.points[c].normal);
+            rawNormals.push(this.points[b].normal);
+            rawNormals.push(this.points[d].normal);
+
+            // Back face
+            rawVerts.push(this.points[c].pos);
+            rawVerts.push(this.points[d].pos);
+            rawVerts.push(this.points[b].pos);
+            rawNormals.push(this.points[c].normal.scale(-1));
+            rawNormals.push(this.points[d].normal.scale(-1));
+            rawNormals.push(this.points[b].normal.scale(-1));
         }
     }
 
