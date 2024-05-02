@@ -124,12 +124,12 @@ export class Cloth {
     let pt_dist = Cloth.width / density;
     this.density = density;
 
-    this.tensile = 1500/this.density;
+    this.tensile = 30;
     this.structK = this.tensile;
     this.sheerK = this.tensile/Math.sqrt(2);
     this.flexK = this.tensile/2;
     
-    this.drag = 5.0/density;
+    this.drag = 0.1;
     this.springSet = new Set<number>();
     this.currScene = 1;
 
