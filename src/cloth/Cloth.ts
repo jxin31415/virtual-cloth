@@ -118,6 +118,7 @@ export class Cloth {
 
   private HAS_WIND = true;
   private HAS_SELF_COLLISIONS = false;
+  private SMOOTH_NORMALS = true;
 
   private density : number;
   private springSet: Set<number>;
@@ -342,40 +343,61 @@ export class Cloth {
             let c = (i-1) * (this.density+1) + j;
             let d = i * (this.density+1) + j;
             
-            // Triangle #1
-            // Front face
-            rawVerts.push(this.points[a].pos);
-            rawVerts.push(this.points[b].pos);
-            rawVerts.push(this.points[c].pos);
-            rawNormals.push(this.points[a].normal);
-            rawNormals.push(this.points[b].normal);
-            rawNormals.push(this.points[c].normal);
+            if (this.SMOOTH_NORMALS) {
+                // Triangle #1
+                // Front face
+                rawVerts.push(this.points[a].pos);
+                rawVerts.push(this.points[b].pos);
+                rawVerts.push(this.points[c].pos);
+                rawNormals.push(this.points[a].normal);
+                rawNormals.push(this.points[b].normal);
+                rawNormals.push(this.points[c].normal);
+    
+                // Back face
+                rawVerts.push(this.points[a].pos);
+                rawVerts.push(this.points[c].pos);
+                rawVerts.push(this.points[b].pos);
+                rawNormals.push(this.points[a].normal.scale(-1));
+                rawNormals.push(this.points[c].normal.scale(-1));
+                rawNormals.push(this.points[b].normal.scale(-1));
+    
+                
+                // Triangle #2
+                // Front face
+                rawVerts.push(this.points[c].pos);
+                rawVerts.push(this.points[b].pos);
+                rawVerts.push(this.points[d].pos);
+                rawNormals.push(this.points[c].normal);
+                rawNormals.push(this.points[b].normal);
+                rawNormals.push(this.points[d].normal);
+    
+                // Back face
+                rawVerts.push(this.points[c].pos);
+                rawVerts.push(this.points[d].pos);
+                rawVerts.push(this.points[b].pos);
+                rawNormals.push(this.points[c].normal.scale(-1));
+                rawNormals.push(this.points[d].normal.scale(-1));
+                rawNormals.push(this.points[b].normal.scale(-1));
+            } else {
+                // Front face
+                let ap = this.points[a].pos;
+                let bp = this.points[b].pos;
+                let cp = this.points[c].pos;
+                let dp = this.points[d].pos;
 
-            // Back face
-            rawVerts.push(this.points[a].pos);
-            rawVerts.push(this.points[c].pos);
-            rawVerts.push(this.points[b].pos);
-            rawNormals.push(this.points[a].normal.scale(-1));
-            rawNormals.push(this.points[c].normal.scale(-1));
-            rawNormals.push(this.points[b].normal.scale(-1));
+                rawVerts.push(ap);
+                rawVerts.push(bp);
+                rawVerts.push(cp);
+                let norm = this.findNormal(ap, bp, cp);
+                rawNormals.push(norm); rawNormals.push(norm); rawNormals.push(norm);
 
-            
-            // Triangle #2
-            // Front face
-            rawVerts.push(this.points[c].pos);
-            rawVerts.push(this.points[b].pos);
-            rawVerts.push(this.points[d].pos);
-            rawNormals.push(this.points[c].normal);
-            rawNormals.push(this.points[b].normal);
-            rawNormals.push(this.points[d].normal);
-
-            // Back face
-            rawVerts.push(this.points[c].pos);
-            rawVerts.push(this.points[d].pos);
-            rawVerts.push(this.points[b].pos);
-            rawNormals.push(this.points[c].normal.scale(-1));
-            rawNormals.push(this.points[d].normal.scale(-1));
-            rawNormals.push(this.points[b].normal.scale(-1));
+                // Back face
+                rawVerts.push(ap);
+                rawVerts.push(cp);
+                rawVerts.push(bp);
+                norm = this.findNormal(ap, cp, bp);
+                rawNormals.push(norm); rawNormals.push(norm); rawNormals.push(norm);
+            }
         }
     }
 
@@ -418,6 +440,10 @@ export class Cloth {
   
   public toggleWind() {
     this.HAS_WIND = !this.HAS_WIND;
+  }
+
+  public toggleNormals() {
+    this.SMOOTH_NORMALS = !this.SMOOTH_NORMALS;
   }
 
   public setTensile(t: number){

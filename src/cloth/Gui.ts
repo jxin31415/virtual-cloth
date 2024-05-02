@@ -213,6 +213,10 @@ export class GUI implements IGUI {
         this.cloth.toggleWind();
         break;
       }
+      case "KeyN": {
+        this.cloth.toggleNormals();
+        break;
+      }
       case "ArrowLeft": {
         this.camera.roll(GUI.rollSpeed, false);
         break;
