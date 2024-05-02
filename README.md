@@ -11,7 +11,7 @@ The primary interesting physical principle we use is *Hooke's Law*, which descri
 Then, for each point, we can maintain its acceleration, velocity, and position. To simulate the system, we'll simply step through time (using very small timesteps) and use Newton's second law (`F = ma`) to update the acceleration, and some kinematic equations to update the velocity and position.
 
 ### Cloth
-We model a cloth simply as a network of particles and springs connecting those points. In particular, we add:
+We model a cloth simply as a network of points and springs connecting those points. In particular, we add:
 
 - *structural springs*: Connects adjacent (horizontally or vertically) points and pulls the cloth together into one object.
 - *sheer springs*: Connects diagonally adjacent points, prevents the cloth from collapsing into a line.
@@ -63,7 +63,7 @@ The contents of this README and `report.pdf` are identical. We provide:
 ### How to Run
 This project can be run the same way as every other WebGL project from this semester. First, run, `make-cloth.py` from the project root directory, and then launch an HTTP server with `http-server dist -c-1`. This will launch an interactive demo. You can use the typical camera controls (`WASD`, arrow keys) to navigate around the environment. 
 
-We provide some interesting sliders and toggles. We point to *Wind Strength* in particular, which < what does wind actually do? > will generate some interesting interactions. `Toggle Smooth Shading` changes the way the cloth is rendered as described above. `Prevent Cloth Self-Intersections` is also toggle-able, but is an experimental feature due to it being computationally expensive. We also provide settings for tensile strength, drag force, speed (of animation).
+We provide some interesting sliders and toggles. We point to `Wind Strength` in particular, which will generate some interesting interactions. `Toggle Smooth Shading` changes the way the cloth is rendered as described above. `Prevent Cloth Self-Intersections` is also toggle-able, but is an experimental feature due to it being computationally expensive. We also provide settings for tensile strength, drag force, and speed (of animation).
 
 ### Scenes
 We have some different scenes, which can be set using the number keys.
@@ -79,6 +79,7 @@ We have some different scenes, which can be set using the number keys.
 https://www.youtube.com/watch?v=aDzMda7cPxI \
 https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/ \
 https://graphics.stanford.edu/~mdfisher/cloth.html \
+https://github.com/ndesmic/geogl/blob/v3/js/lib/shape-gen.js \
 https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals
 
 ### Extra Credit
