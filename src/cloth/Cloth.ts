@@ -96,10 +96,6 @@ export class ClothPoint {
  * Represents a Cloth
  */
 
-// **************************************
-// TODO: FIX CERTAIN POINTS TO CERTAIN POSITIONS
-// **************************************
-
 export class Cloth {
   private points: ClothPoint[]; //changed this to be 1-d
   private springs: Vec4[];

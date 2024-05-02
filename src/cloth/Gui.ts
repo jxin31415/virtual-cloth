@@ -34,6 +34,8 @@ export class GUI implements IGUI {
   private height: number;
   private width: number;
 
+  public level: number;
+
   private cloth: Cloth;
   private animation: CanvasAnimation;
 
@@ -55,6 +57,8 @@ export class GUI implements IGUI {
 
     this.cloth = cloth;
     this.animation = animation;
+
+    this.level = 1;
 
 	  this.reset();
 
@@ -167,26 +171,32 @@ export class GUI implements IGUI {
     switch (key.code) {
       case "Digit1": {
         this.cloth.setScene(1);
+        this.level = 1;
         break;
       }
       case "Digit2": {
         this.cloth.setScene(2);
+        this.level = 2;
         break;
       }
       case "Digit3": {
         this.cloth.setScene(3);
+        this.level = 3;
         break;
       }    
       case "Digit4": {
         this.cloth.setScene(4);
+        this.level = 4;
         break;
       }    
       case "Digit5": {
         this.cloth.setScene(5);
+        this.level = 5;
         break;
       }    
       case "Digit6": {
         this.cloth.setScene(6);
+        this.level = 6;
         break;
       }    
       case "KeyW": {

@@ -9,10 +9,13 @@ import {
   defaultFSText,
   defaultVSText,
   floorFSText,
-  floorVSText
+  floorVSText,
+  sphereFSText,
+  sphereVSText
 } from "./Shaders.js";
 import { Mat4, Vec4 } from "../lib/TSM.js";
 import { Floor } from "../lib/webglutils/Floor.js";
+import { Sphere } from "../cloth/Sphere.js"
 
 export interface ClothAnimationTest {
   reset(): void;
@@ -73,6 +76,27 @@ export class ClothAnimation extends CanvasAnimation {
   private floorProjUniformLocation: WebGLUniformLocation = -1;
   private floorLightUniformLocation: WebGLUniformLocation = -1;
 
+    private sphere: Sphere = new Sphere();
+
+    /* Sphere Rendering Info */
+    private sphereVAO: WebGLVertexArrayObjectOES = -1;
+    private sphereProgram: WebGLProgram = -1;
+
+    /* Sphere Buffers */
+    private spherePosBuffer: WebGLBuffer = -1;
+    private sphereIndexBuffer: WebGLBuffer = -1;
+    private sphereNormBuffer: WebGLBuffer = -1;
+
+    /* Sphere Attribute Locations */
+    private spherePosAttribLoc: GLint = -1;
+    private sphereNormAttribLoc: GLint = -1;
+
+    /* Sphere Uniform Locations */
+    private sphereWorldUniformLocation: WebGLUniformLocation = -1;
+    private sphereViewUniformLocation: WebGLUniformLocation = -1;
+    private sphereProjUniformLocation: WebGLUniformLocation = -1;
+    private sphereLightUniformLocation: WebGLUniformLocation = -1;
+
   constructor(canvas: HTMLCanvasElement) {
     super(canvas);
     this.gui = new GUI(canvas, this, this.cloth);
@@ -92,6 +116,7 @@ export class ClothAnimation extends CanvasAnimation {
 
     this.initCloth();
     this.initFloor();
+    this.initSphere();
 
     this.gui.reset();
     this.millis = new Date().getTime();
@@ -316,6 +341,109 @@ export class ClothAnimation extends CanvasAnimation {
     gl.uniform4fv(this.floorLightUniformLocation, this.lightPosition.xyzw);
   }
 
+  // Sets up the sphere
+  public initSphere(): void {
+
+    this.sphere.update();
+      
+    const gl: WebGLRenderingContext = this.ctx;
+
+    /* Compile Shaders */
+    this.sphereProgram = WebGLUtilities.createProgram(
+      gl,
+      sphereVSText,
+      sphereFSText
+    );
+    gl.useProgram(this.sphereProgram);
+
+    /* Create VAO for sphere */
+    this.sphereVAO = this.extVAO.createVertexArrayOES() as WebGLVertexArrayObjectOES;
+    this.extVAO.bindVertexArrayOES(this.sphereVAO);
+
+    this.spherePosAttribLoc = gl.getAttribLocation(
+      this.sphereProgram,
+      "vertPosition"
+    );
+    this.spherePosBuffer = gl.createBuffer() as WebGLBuffer;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.spherePosBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.sphere.positionsFlat(), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+      this.spherePosAttribLoc /* Essentially, the destination */,
+      4 /* Number of bytes per primitive */,
+      gl.FLOAT /* The type of data */,
+      false /* Normalize data. Should be false. */,
+      4 *
+        Float32Array.BYTES_PER_ELEMENT /* Number of bytes to the next element */,
+      0 /* Initial offset into buffer */
+    );
+    gl.enableVertexAttribArray(this.spherePosAttribLoc);
+
+    /* Create and setup normals buffer*/
+    this.sphereNormAttribLoc = gl.getAttribLocation(
+      this.sphereProgram,
+      "aNorm"
+    );
+    this.sphereNormBuffer = gl.createBuffer() as WebGLBuffer;
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.sphereNormBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.sphere.normalsFlat(), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+      this.sphereNormAttribLoc,
+      4,
+      gl.FLOAT,
+      false,
+      4 * Float32Array.BYTES_PER_ELEMENT,
+      0
+    );
+    gl.enableVertexAttribArray(this.sphereNormAttribLoc);
+
+    this.sphereIndexBuffer = gl.createBuffer() as WebGLBuffer;
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.sphereIndexBuffer);
+    gl.bufferData(
+      gl.ELEMENT_ARRAY_BUFFER,
+      this.sphere.indicesFlat(),
+      gl.STATIC_DRAW
+    );
+
+    /* End VAO recording */
+    this.extVAO.bindVertexArrayOES(this.sphereVAO);
+
+    /* Get uniform locations */
+    this.sphereWorldUniformLocation = gl.getUniformLocation(
+      this.sphereProgram,
+      "mWorld"
+    ) as WebGLUniformLocation;
+    this.sphereViewUniformLocation = gl.getUniformLocation(
+      this.sphereProgram,
+      "mView"
+    ) as WebGLUniformLocation;
+    this.sphereProjUniformLocation = gl.getUniformLocation(
+      this.sphereProgram,
+      "mProj"
+    ) as WebGLUniformLocation;
+    this.sphereLightUniformLocation = gl.getUniformLocation(
+      this.sphereProgram,
+      "lightPosition"
+    ) as WebGLUniformLocation;
+
+    /* Bind uniforms */
+    gl.uniformMatrix4fv(
+      this.sphereWorldUniformLocation,
+      false,
+      new Float32Array(this.sphere.uMatrix().all())
+    );
+    gl.uniformMatrix4fv(
+      this.sphereViewUniformLocation,
+      false,
+      new Float32Array(Mat4.identity.all())
+    );
+    gl.uniformMatrix4fv(
+      this.sphereProjUniformLocation,
+      false,
+      new Float32Array(Mat4.identity.all())
+    );
+    gl.uniform4fv(this.sphereLightUniformLocation, this.lightPosition.xyzw);
+  }
+
   /**
    * Draws a single frame
    */
@@ -411,8 +539,6 @@ export class ClothAnimation extends CanvasAnimation {
       gl.UNSIGNED_INT,
       0
     );
-
-    // TODO: draw the floor
     
     /* Floor - Update/Draw */
     const floorMatrix = this.floor.uMatrix();
@@ -488,6 +614,75 @@ export class ClothAnimation extends CanvasAnimation {
       0
     );
 
+    /* sphere - Update/Draw */
+    const sphereMatrix = this.sphere.uMatrix();
+    gl.useProgram(this.sphereProgram);
+
+    this.extVAO.bindVertexArrayOES(this.sphereVAO);
+
+    /* Update sphere buffers */
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.spherePosBuffer);
+    gl.bufferData(
+        gl.ARRAY_BUFFER,
+        this.sphere.positionsFlat(),
+        gl.STATIC_DRAW
+    );
+    gl.vertexAttribPointer(
+        this.spherePosAttribLoc,
+        4,
+        gl.FLOAT,
+        false,
+        4 * Float32Array.BYTES_PER_ELEMENT,
+        0
+    );
+    gl.enableVertexAttribArray(this.spherePosAttribLoc);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.sphereNormBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, this.sphere.normalsFlat(), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+        this.sphereNormAttribLoc,
+        4,
+        gl.FLOAT,
+        false,
+        4 * Float32Array.BYTES_PER_ELEMENT,
+        0
+    );
+    gl.enableVertexAttribArray(this.sphereNormAttribLoc);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.sphereIndexBuffer);
+    gl.bufferData(
+        gl.ELEMENT_ARRAY_BUFFER,
+        this.sphere.indicesFlat(),
+        gl.STATIC_DRAW
+    );
+
+    /* Update sphere uniforms */
+    gl.uniformMatrix4fv(
+      this.sphereWorldUniformLocation,
+      false,
+      new Float32Array(sphereMatrix.all())
+    );
+    gl.uniformMatrix4fv(
+      this.sphereViewUniformLocation,
+      false,
+      new Float32Array(this.gui.viewMatrix().all())
+    );
+    gl.uniformMatrix4fv(
+      this.sphereProjUniformLocation,
+      false,
+      new Float32Array(this.gui.projMatrix().all())
+    );
+    // console.log("Drawing ", this.sphere.indicesFlat().length, " triangles");
+
+    if (this.gui.level == 5) {
+        /* Draw sphere */
+        gl.drawElements(
+        gl.TRIANGLES,
+        this.sphere.indicesFlat().length,
+        gl.UNSIGNED_INT,
+        0
+        );
+    }
   }
 
   public getGUI(): GUI {
