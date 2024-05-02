@@ -2,6 +2,7 @@ import { Camera } from "../lib/webglutils/Camera.js";
 import { CanvasAnimation } from "../lib/webglutils/CanvasAnimation.js";
 import { Cloth } from "./Cloth.js";
 import { Mat4, Vec3 } from "../lib/TSM.js";
+import { ClothAnimation } from "./App.js";
 
 /**
  * Might be useful for designing any animation GUI
@@ -37,7 +38,7 @@ export class GUI implements IGUI {
   public level: number;
 
   private cloth: Cloth;
-  private animation: CanvasAnimation;
+  private animation: ClothAnimation;
 
   /**
    *
@@ -47,7 +48,7 @@ export class GUI implements IGUI {
    */
   constructor(
     canvas: HTMLCanvasElement,
-    animation: CanvasAnimation,
+    animation: ClothAnimation,
     cloth: Cloth
   ) {
     this.height = canvas.height;
@@ -306,6 +307,13 @@ export class GUI implements IGUI {
       this.cloth.setDrag(d);
     });
 
+    const densitySlider = document.getElementById("densitySlider") as HTMLInputElement;
+    densitySlider.addEventListener("input", () => {
+      const d = parseFloat(densitySlider.value);
+      this.cloth = new Cloth(d);
+      this.animation.setCloth(this.cloth);
+    });
+
     const collisionCheckbox = document.getElementById("collisions") as HTMLInputElement;
     collisionCheckbox.addEventListener("change", () => {
       if (collisionCheckbox.checked) {
@@ -323,6 +331,7 @@ export class GUI implements IGUI {
         this.cloth.toggleNormalsB(false);
       }
     });
+    
   }
 
   public setCloth(c: Cloth){

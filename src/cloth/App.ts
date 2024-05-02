@@ -22,6 +22,7 @@ export interface ClothAnimationTest {
   setDensity(level: number): void;
   getGUI(): GUI;
   draw(): void;
+  setCloth(c: Cloth): void;
 }
 
 export class ClothAnimation extends CanvasAnimation {
@@ -687,6 +688,10 @@ export class ClothAnimation extends CanvasAnimation {
 
   public getGUI(): GUI {
     return this.gui;
+  }
+
+  public setCloth(c: Cloth){
+    this.cloth = c;
   }
 }
 
