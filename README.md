@@ -77,7 +77,7 @@ We have some different scenes, which can be set using the number keys.
 ### References
 General inspiration - https://www.youtube.com/watch?v=aDzMda7cPxI \
 Inspiration for three-tiered spring model - https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/ \
-Inspiration for self-intersection modeling ; https://graphics.stanford.edu/~mdfisher/cloth.html \
+Inspiration for self-intersection modeling - https://graphics.stanford.edu/~mdfisher/cloth.html \
 Sphere modeling - https://github.com/ndesmic/geogl/blob/v3/js/lib/shape-gen.js \
 Inspiration for smooth shading - https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals
 
