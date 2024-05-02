@@ -205,6 +205,10 @@ export class GUI implements IGUI {
         this.camera.offset(this.camera.right(), GUI.panSpeed, true);
         break;
       }
+      case "KeyR": {
+        this.reset();
+        break;
+      }
       case "KeyP": {
         this.cloth.toggleWind();
         break;

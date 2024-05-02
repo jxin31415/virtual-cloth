@@ -12,7 +12,7 @@
 
     <div>
       <label for="tensileSlider">Material Tensile Strength (K):</label>
-      <input type="range" id="tensileSlider" min="1" max="10" value="2" step="1">
+      <input type="range" id="tensileSlider" min="1" max="35" value="30" step="1">
     </div>
     <br>
     <div>
@@ -22,20 +22,12 @@
     <br>
     <div>
       <label for="deltaTSlider">Speed:</label>
-      <input type="range" id="deltaTSlider" min="0" max="0.25" value="0.1" step="0.01" list="tickmarks">
-      <datalist id="tickmarks">
-        <option value="0">0</option>
-        <option value="0.05">0.05</option>
-        <option value="0.1">0.1</option>
-        <option value="0.15">0.15</option>
-        <option value="0.2">0.15</option>
-        <option value="0.25">0.25</option>
-      </datalist>
+      <input type="range" id="deltaTSlider" min="0" max="0.1" value="0.1" step="0.005">
     </div>
     <br>
     <div>
       <label for="dragSlider">Drag Force:</label>
-      <input type="range" id="dragSlider" min="0" max="0.2" value="0.03" step="0.01">
+      <input type="range" id="dragSlider" min="0" max="0.2" value="0.1" step="0.01">
     </div>
     <!-- <section id="test-view" class="test-suite">
       <button id="run-button" v-on:click="run">Run Test Suite</button>
