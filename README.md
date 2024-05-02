@@ -20,7 +20,7 @@ We model a cloth simply as a network of points and springs connecting those poin
 ### Collisions
 We do some rudimentary collision tracking, such as colliding with the floor or with a sphere. For every point, we check if it will intersect any objects. If it does, we project it back to the surface of the object. 
 
-#### Self-Intersections
+#### Self-Intersections (cloth-cloth collisions)
 We also have an option for the cloth to prevent any self-intersection issues, which ruins the immersion of the simulation. We do this by checking the distance between every pair of points, and making sure that they are pushed apart if the distances are too close. 
 
 ### Rendering
@@ -48,7 +48,7 @@ To turn smooth shading on and off, use the given checkbox. Smooth shading is by 
 #### Limitations
 There are several limitations of this approach. Importantly, this is not a physically realistic representation of cloth, but in many places is simply "good enough." For example, we implemented linear drag, which is simply an approximation of real-life drag, which is nonlinear and additionally dependent on the size, shape, and material of the object. Additionally, many constants are manually-tuned in order to generate plausible-looking behavior. We find that it is quite time-consuming to tune these constants, and values that cause the velocity per tick to exceed the distance between cloth particles will cause the cloth to "explode" or "implode". 
 
-Additionally, self-collisions are hard to model accurately with a limited computational budget, and our model runs extremely slow when self-intersection modeling is on.
+Additionally, self-collisions are hard to model accurately with a limited computational budget, and our model runs extremely slow when cloth-cloth collision modeling is on.
 
 
 <div style="page-break-after: always;"></div>
@@ -75,11 +75,11 @@ We have some different scenes, which can be set using the number keys.
 6. Cloth is horizontal and fixed at a center point.
 
 ### References
-https://www.youtube.com/watch?v=aDzMda7cPxI \
-https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/ \
-https://graphics.stanford.edu/~mdfisher/cloth.html \
-https://github.com/ndesmic/geogl/blob/v3/js/lib/shape-gen.js \
-https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals
+General inspiration - https://www.youtube.com/watch?v=aDzMda7cPxI \
+Inspiration for three-tiered spring model - https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/ \
+Inspiration for self-intersection modeling ; https://graphics.stanford.edu/~mdfisher/cloth.html \
+Sphere modeling - https://github.com/ndesmic/geogl/blob/v3/js/lib/shape-gen.js \
+Inspiration for smooth shading - https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals
 
 ### Extra Credit
 (10 pts) We have both completed the online course instructor survey.
