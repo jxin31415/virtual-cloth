@@ -226,6 +226,8 @@ export class GUI implements IGUI {
       }
       case "KeyN": {
         this.cloth.toggleNormals();
+        const normalCheckbox = document.getElementById("normals") as HTMLInputElement;
+        normalCheckbox.checked = !normalCheckbox.checked;
         break;
       }
       case "ArrowLeft": {
@@ -302,6 +304,24 @@ export class GUI implements IGUI {
     dragSlider.addEventListener("input", () => {
       const d = parseFloat(dragSlider.value);
       this.cloth.setDrag(d);
+    });
+
+    const collisionCheckbox = document.getElementById("collisions") as HTMLInputElement;
+    collisionCheckbox.addEventListener("change", () => {
+      if (collisionCheckbox.checked) {
+        this.cloth.setCollisions(true);
+      } else {
+        this.cloth.setCollisions(false);
+      }
+    });
+
+    const normalCheckbox = document.getElementById("normals") as HTMLInputElement;
+    normalCheckbox.addEventListener("change", () => {
+      if (normalCheckbox.checked) {
+        this.cloth.toggleNormalsB(true);
+      }else{
+        this.cloth.toggleNormalsB(false);
+      }
     });
   }
 

@@ -86,9 +86,12 @@ export class ClothPoint {
       let vect = this.pos.copy().subtract(sphere);
       let distance = vect.length();
       if(distance < radius){
-        let project = vect.normalize().scale(-1/2*distance);
+        let project = vect.normalize().scale(1/2*(radius-distance));
         this.pos.add(project);
         point.pos.subtract(project);
+
+        this.prevpos = this.pos;
+        point.prevpos = point.pos;
       }
     }
 }
@@ -116,6 +119,7 @@ export class Cloth {
   private HAS_WIND = true;
   private HAS_SELF_COLLISIONS = false;
   private SMOOTH_NORMALS = true;
+  private currScene;
 
   private density : number;
   private springSet: Set<number>;
@@ -131,6 +135,7 @@ export class Cloth {
     
     this.drag = 5.0/density;
     this.springSet = new Set<number>();
+    this.currScene = 1;
 
     // Initialize grid of points
     this.points = [];
@@ -275,12 +280,13 @@ export class Cloth {
     if(this.HAS_SELF_COLLISIONS){
       let numP = this.points.length;
       let hashnum = (this.density+2)*(this.density+2);
+      let pt_dist = Cloth.width / this.density;
       for (let i = 0; i <numP; i++) {
         for(let j = i+1; j <numP; j++) {
           if(this.springSet.has(i*hashnum+j) || this.springSet.has(j*hashnum+i)){
             continue;
           }else{
-            this.points[i].pointCollision(this.points[j], 0.01);
+            this.points[i].pointCollision(this.points[j], pt_dist*1.5);
           }
         }
       }
@@ -439,6 +445,10 @@ export class Cloth {
     this.HAS_WIND = !this.HAS_WIND;
   }
 
+  public toggleNormalsB(b: boolean) {
+    this.SMOOTH_NORMALS = b;
+  }
+
   public toggleNormals() {
     this.SMOOTH_NORMALS = !this.SMOOTH_NORMALS;
   }
@@ -467,9 +477,15 @@ export class Cloth {
     this.drag = d;
   }
 
+  public setCollisions(b: boolean){
+    this.HAS_SELF_COLLISIONS = b;
+    this.setScene(this.currScene);
+  }
+
   public setScene(level: number){
     let pt_dist = Cloth.width / this.density;
     let density = this.density;
+    this.currScene = level;
 
     for (let i = 0; i <= this.density; i++) {
       for(let j = 0; j <= this.density; j++) {
