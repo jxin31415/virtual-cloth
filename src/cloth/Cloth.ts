@@ -43,10 +43,6 @@ export class ClothPoint {
       }
     }
 
-    public trapezoidalIntegrate(time: number){
-
-    }
-
     public verletIntegrate(time: number){
       if(!this.fixed){
         this.floorCollision();
