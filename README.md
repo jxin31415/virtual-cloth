@@ -77,8 +77,8 @@ We have some different scenes, which can be set using the number keys.
 6. Cloth is horizontal and fixed at a center point.
 
 ### References
-https://www.youtube.com/watch?v=aDzMda7cPxI
-https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/
+https://www.youtube.com/watch?v=aDzMda7cPxI \
+https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/ \
 https://graphics.stanford.edu/~mdfisher/cloth.html
 
 ### Extra Credit
