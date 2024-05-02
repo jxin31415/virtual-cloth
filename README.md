@@ -11,18 +11,19 @@ The primary interesting physical principle we use is *Hooke's Law*, which descri
 Then, for each point, we can maintain its acceleration, velocity, and position. To simulate the system, we'll simply step through time (using very small timesteps) and use Newton's second law (`F = ma`) to update the acceleration, and some kinematic equations to update the velocity and position.
 
 ### Cloth
-We model a cloth simply as a network of points and springs connecting those points. In particular, we add:
+We model a cloth simply as a network of particles and springs connecting those points. In particular, we add:
 
-- *structural springs*:
-- *sheer springs*:
-- *flex springs*:
+- *structural springs*: Connects adjacent (horizontally or vertically) points and pulls the cloth together into one object.
+- *sheer springs*: Connects diagonally adjacent points, prevents the cloth from collapsing into a line.
+- *flex springs*: Connects adjacent (horizontally or vertically) points two spaces apart. This prevents the cloth from folding on top of itself.
 
 ### Collisions
-We do some rudimentary collision tracking, such as colliding with the floor or with a sphere. < fill in here >
+We do some rudimentary collision tracking, such as colliding with the floor or with a sphere. For every point, we check if it will intersect any objects. If it does, we project it back to the surface of the object. 
 
-#### Self-collisions
-< elaborate here >
+#### Self-Intersections
+We also have an option for the cloth to prevent any self-intersection issues, which ruins the immersion of the simulation. We do this by checking the distance between every pair of points, and making sure that they are pushed apart if the distances are too close. 
 
+### Rendering
 For the floor, we use the same rendering process as menger sponge, and for the sphere, we use and adapt some reference code taken from Github (https://github.com/ndesmic/geogl/blob/v3/js/lib/shape-gen.js), as rendering geometry is not the focus of our project.
 
 
@@ -32,11 +33,10 @@ For the floor, we use the same rendering process as menger sponge, and for the s
 ## Implementation Details
 
 #### Integration Estimators
-There are a few different ways of stepping through time and updating physical properties. We first tried to use Euler's method to estimate the effects of acceleration and velocity on each particle. This turned out to be incredibly unstable. We then implemented Verlet integration, which ended up being stable enough to use for all of our calculations. 
-< can u add the equations either here or above? >
+There are a few different ways of stepping through time and updating physical properties. We first tried to use Euler's method to estimate the effects of acceleration and velocity on each particle: $x_{n+\Delta t}​=x_n​+hf(t_n​,x_n​)$. This turned out to be incredibly unstable because conservation of energy does not hold. We then implemented Verlet integration $x_{n+\Delta t}​=2x_n - x_{n-\Delta t}​+a_n \Delta t^2$, which ended up being stable enough to use for all of our calculations. 
 
-#### Dampening Term
-However, even this is unsatisfactory -- there will always be some error left in the system. In order to correct for this error, and to make the system more realistic by modeling *energy loss*, we'll also add a dampening term. That is, we'll add a force that resists the particle's current direction of motion. Without this, we find that the error compounds and causes the system to quickly spiral out of control (it appears to implode or explode). Even without any error, a spring that keeps bouncing forever is unrealistic, justifying the use of this dampening term. Now we just need to add a constant force for gravity, and put it all together!
+#### Other forces
+However, with only spring forces, our simulation will oscillate forever. In order to make the system more realistic, we modeling *energy loss* by adding a *drag force*. This force resists the particle's current direction of motion and its magnitude scales with the velocity of the particle. Drag force is also especially useful in order to simulate the fluttering of the cloth. In addition, we find that drag for is useful for mitigating error compounding which would've caused the system to spiral out of control (it appears to implode or explode). Next, we add a constant force for *gravity*, which lets our cloth fall to the ground instead of floating in the air. Finally, we add an optional *wind* force, which is modeled by a constant function that varies globally. Together, these forces model cloth physics well enough to make a pretty realistic simulation. 
 
 #### Rendering
 We render the system by converting the particle system into a triangle mesh. Since the cloth is arranged in a grid-like structure, for each "cell" (a square defined by four points), we can simply split that into two triangles and render those two triangles. We use a similar method to the Menger sponge, where we'll duplicate points when they need to be used for multiple triangles.
@@ -47,10 +47,9 @@ We implement smooth shading following the instructions here (https://computergra
 To turn smooth shading on and off, use the given checkbox. Smooth shading is by default on. When smooth shading is off, the scene instead uses flat shading, e.g. each triangle is a flat plane. Additionally, we only render half the triangles so that you can see exactly where the vertices are and how the triangles are being generated.
 
 #### Limitations
-There are several limitations of this approach. Importantly, this is not a completely realistic representation of cloth, and in many places is simply "good enough." (can we elaborate here, I don't really know what to say) For example, the drag force is simply an approximation of energy loss. Additionally, many constants are manually-tuned in order to generate plausible-looking behavior. We find that it is quite difficult to tune these constants, and getting it wrong often causes the cloth to "explode" or "implode". 
+There are several limitations of this approach. Importantly, this is not a physically realistic representation of cloth, but in many places is simply "good enough." For example, we implemented linear drag, which is simply an approximation of real-life drag, which is nonlinear and additionally dependent on the size, shape, and material of the object. Additionally, many constants are manually-tuned in order to generate plausible-looking behavior. We find that it is quite time-consuming to tune these constants, and values that cause the velocity per tick to exceed the distance between cloth particles will cause the cloth to "explode" or "implode". 
 
-blah blah blah
-Additionally, self-collisions are hard to model accurately with a limited computational budget. 
+Additionally, self-collisions are hard to model accurately with a limited computational budget, and our model runs extremely slow when self-intersection modeling is on.
 
 
 <div style="page-break-after: always;"></div>
@@ -79,7 +78,8 @@ We have some different scenes, which can be set using the number keys.
 ### References
 https://www.youtube.com/watch?v=aDzMda7cPxI \
 https://ocw.mit.edu/courses/6-837-computer-graphics-fall-2012/resources/mit6_837f12_assn3/ \
-https://graphics.stanford.edu/~mdfisher/cloth.html
+https://graphics.stanford.edu/~mdfisher/cloth.html \
+https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals
 
 ### Extra Credit
 (10 pts) We have both completed the online course instructor survey.
