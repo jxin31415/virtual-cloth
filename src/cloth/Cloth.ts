@@ -448,6 +448,10 @@ export class Cloth {
     this.HAS_WIND = !this.HAS_WIND;
   }
 
+  public toggleNormalsB(b: boolean) {
+    this.SMOOTH_NORMALS = b;
+  }
+
   public toggleNormals() {
     this.SMOOTH_NORMALS = !this.SMOOTH_NORMALS;
   }
