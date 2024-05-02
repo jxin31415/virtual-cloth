@@ -310,7 +310,7 @@ export class GUI implements IGUI {
     const densitySlider = document.getElementById("densitySlider") as HTMLInputElement;
     densitySlider.addEventListener("input", () => {
       const d = parseFloat(densitySlider.value);
-      this.cloth = new Cloth(d);
+      this.cloth = new Cloth(d, this.level);
       this.animation.setCloth(this.cloth);
     });
 

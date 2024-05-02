@@ -124,7 +124,7 @@ export class Cloth {
   private density : number;
   private springSet: Set<number>;
 
-  constructor(density: number) {
+  constructor(density: number, level: number) {
     let pt_dist = Cloth.width / density;
     this.density = density;
 
@@ -143,74 +143,7 @@ export class Cloth {
 
     let hashnum = (density+2)*(density+2);
 
-    for (let i = 0; i <= density; i++) {
-      for(let j = 0; j <= density; j++) {
-          this.points.push(new ClothPoint(
-            new Vec3([i * pt_dist, j * pt_dist, j * pt_dist * 0.5]), // use this for actual setup
-
-            // this is here for debugging + it looks cool
-            // new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, j * pt_dist * 0.5 + Math.random() * 0.1]),
-            new Vec3([0, 0, 0]),
-            ((i==0||i==density)&&j==density)
-          ));
-      }
-    }
-
-    //structural springs
-    for (let i = 0; i <= density; i++) {
-      for(let j = 0; j <= density-1; j++) {
-        let num1 = i*(density+1) + j;
-        let num2 = i*(density+1) + j+1;
-        this.springs.push(new Vec4([num1, num2, 1, pt_dist]));
-        this.springSet.add(num1*hashnum+num2);
-      }
-    }
-
-    for (let i = 0; i <= density-1; i++) {
-      for(let j = 0; j <= density; j++) {
-        let num1 = i*(density+1) + j;
-        let num2 = (i+1)*(density+1) + j;
-        this.springs.push(new Vec4([num1, num2, 1, pt_dist]));
-        this.springSet.add(num1*hashnum+num2);
-      }
-    }
-    //shear springs
-    for (let i = 0; i <= density-1; i++) {
-      for(let j = 0; j <= density-1; j++) {
-        let num1 = i*(density+1) + j;
-        let num2 = (i+1)*(density+1) + j+1;
-        this.springs.push(new Vec4([num1, num2, 2, pt_dist*Math.sqrt(2)]));
-        this.springSet.add(num1*hashnum+num2);
-      }
-    }
-
-    for (let i = 1; i <= density; i++) {
-      for(let j = 0; j <= density-1; j++) {
-        let num1 = i*(density+1) + j;
-        let num2 = (i-1)*(density+1) + j+1;
-        this.springs.push(new Vec4([num1, num2, 2, pt_dist*Math.sqrt(2)]));
-        this.springSet.add(num1*hashnum+num2);
-      }
-    }
-
-    //flexion springs
-    for (let i = 0; i <= density; i++) {
-      for(let j = 0; j <= density-2; j++) {
-        let num1 = i*(density+1) + j;
-        let num2 = i*(density+1) + j+2;
-        this.springs.push(new Vec4([num1, num2, 3, 2*pt_dist]));
-        this.springSet.add(num1*hashnum+num2);
-      }
-    }
-
-    for (let i = 0; i <= density-2; i++) {
-      for(let j = 0; j <= density; j++) {
-        let num1 = i*(density+1) + j;
-        let num2 = (i+2)*(density+1) + j;
-        this.springs.push(new Vec4([num1, num2, 3, 2*pt_dist]));
-        this.springSet.add(num1*hashnum+num2);
-      }
-    }
+    this.setScene(level);
   }
 
   public calcForces(){

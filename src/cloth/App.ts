@@ -127,7 +127,7 @@ export class ClothAnimation extends CanvasAnimation {
    * Initialize the Cloth cloth data structure
    */
   public initCloth(): void {
-    this.cloth = new Cloth(50);
+    this.cloth = new Cloth(50, this.gui.level);
     this.gui.setCloth(this.cloth);
 
     /* Alias context for syntactic convenience */
