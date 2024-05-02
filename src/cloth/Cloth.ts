@@ -30,11 +30,11 @@ export class ClothPoint {
 
     public eulerIntegrate(time: number){
       if(!this.fixed){
+        this.floorCollision();
+
         this.pos.add(this.vel.copy().scale(time));
         this.vel.add(this.accel.copy().scale(time));
         
-        this.floorCollision();
-
         if(this.hasSphere){
           this.sphereCollision(new Vec3([0, -2, 0]), 1);
         }
@@ -47,11 +47,11 @@ export class ClothPoint {
 
     public verletIntegrate(time: number){
       if(!this.fixed){
+        this.floorCollision();
         let temp = this.pos.copy()
         this.pos = this.accel.copy().scale(time*time).add(this.pos.copy().scale(2)).subtract(this.prevpos);
         this.prevpos = temp;
         this.vel = this.pos.copy().subtract(this.prevpos).scale(1/time);
-        this.floorCollision();
 
         if(this.hasSphere){
           this.sphereCollision(new Vec3([0, -2, 0]), 1);
@@ -61,7 +61,11 @@ export class ClothPoint {
 
     public floorCollision(){
       if(this.pos.y <= -1.99){
-        this.pos.y = -1.99;
+        if(this.accel.y < 0){
+          this.accel.y = 0.0;
+          this.prevpos = this.pos;
+        }
+        // this.pos.y = -1.99;
       }
     }
 
@@ -114,6 +118,7 @@ export class Cloth {
   private HAS_SELF_COLLISIONS = false;
 
   private density : number;
+  private springSet: Set<number>;
 
   constructor(density: number) {
     let pt_dist = Cloth.width / density;
@@ -125,10 +130,14 @@ export class Cloth {
     this.flexK = this.tensile/2;
     
     this.drag = 5.0/density;
+    this.springSet = new Set<number>();
 
     // Initialize grid of points
     this.points = [];
     this.springs = [];
+
+    let hashnum = (density+2)*(density+2);
+
     for (let i = 0; i <= density; i++) {
       for(let j = 0; j <= density; j++) {
           this.points.push(new ClothPoint(
@@ -148,6 +157,7 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = i*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, this.structK, pt_dist]));
+        this.springSet.add(num1*hashnum+num2);
       }
     }
 
@@ -156,6 +166,7 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i+1)*(density+1) + j;
         this.springs.push(new Vec4([num1, num2, this.structK, pt_dist]));
+        this.springSet.add(num1*hashnum+num2);
       }
     }
     //shear springs
@@ -164,6 +175,7 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i+1)*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, this.sheerK, pt_dist*Math.sqrt(2)]));
+        this.springSet.add(num1*hashnum+num2);
       }
     }
 
@@ -172,6 +184,7 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i-1)*(density+1) + j+1;
         this.springs.push(new Vec4([num1, num2, this.sheerK, pt_dist*Math.sqrt(2)]));
+        this.springSet.add(num1*hashnum+num2);
       }
     }
 
@@ -181,6 +194,7 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = i*(density+1) + j+2;
         this.springs.push(new Vec4([num1, num2, this.flexK, 2*pt_dist]));
+        this.springSet.add(num1*hashnum+num2);
       }
     }
 
@@ -189,6 +203,7 @@ export class Cloth {
         let num1 = i*(density+1) + j;
         let num2 = (i+2)*(density+1) + j;
         this.springs.push(new Vec4([num1, num2, this.flexK, 2*pt_dist]));
+        this.springSet.add(num1*hashnum+num2);
       }
     }
   }
@@ -255,9 +270,14 @@ export class Cloth {
 
     if(this.HAS_SELF_COLLISIONS){
       let numP = this.points.length;
+      let hashnum = (this.density+2)*(this.density+2);
       for (let i = 0; i <numP; i++) {
         for(let j = i+1; j <numP; j++) {
-          this.points[i].pointCollision(this.points[j], 0.01);
+          if(this.springSet.has(i*hashnum+j) || this.springSet.has(j*hashnum+i)){
+            continue;
+          }else{
+            this.points[i].pointCollision(this.points[j], 0.01);
+          }
         }
       }
     }
@@ -384,7 +404,7 @@ export class Cloth {
         let num1 = i*(this.density+1)+j;
 
         if(level < 5){
-          this.points[num1].pos = new Vec3([i * pt_dist, j * pt_dist, i * pt_dist * 0.5]);
+          this.points[num1].pos = new Vec3([i * pt_dist, j * pt_dist, j * pt_dist * 0.5]);
           this.points[num1].hasSphere = false;
         }else{
           this.points[num1].pos = new Vec3([i * pt_dist - 0.5, 1, j * pt_dist - 0.5]);
