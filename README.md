@@ -1,6 +1,6 @@
 Names: Jimmy Xin (jjx88), Gavin Wang (gw7775)
 
-# Final Project
+## Final Project
 For our final project, we implemented a *mass-spring system* that we use to simulate *cloth*.
 
 ### Mass-Spring System
@@ -29,21 +29,17 @@ For the floor, we use the same rendering process as menger sponge, and for the s
 <div style="page-break-after: always;"></div>
 
 
-# Implementation Details
+## Implementation Details
 
 #### Integration Estimators
 There are a few different ways of stepping through time and updating physical properties. We first tried to use Euler's method to estimate the effects of acceleration and velocity on each particle. This turned out to be incredibly unstable. We then implemented Verlet integration, which ended up being stable enough to use for all of our calculations. 
 < can u add the equations either here or above? >
 
 #### Dampening Term
-However, even this is unsatisfactory -- there will always be some error left in the system. In order to correct for this error, and to make the system more realistic by modeling *energy loss*, we'll also add a dampening term. That is, we'll add a force that resists the particle's current direction of motion. Without this, we find that the error compounds and causes the system to quickly spiral out of control (it appears to implode or explode). Even without any error, a spring that keeps bouncing forever is unrealistic, justifying the use of this dampening term.
-
-Now we just need to add a constant force for gravity, and put it all together!
+However, even this is unsatisfactory -- there will always be some error left in the system. In order to correct for this error, and to make the system more realistic by modeling *energy loss*, we'll also add a dampening term. That is, we'll add a force that resists the particle's current direction of motion. Without this, we find that the error compounds and causes the system to quickly spiral out of control (it appears to implode or explode). Even without any error, a spring that keeps bouncing forever is unrealistic, justifying the use of this dampening term. Now we just need to add a constant force for gravity, and put it all together!
 
 #### Rendering
-We render the system by converting the particle system into a triangle mesh. Since the cloth is arranged in a grid-like structure, for each "cell" (a square defined by four points), we can simply split that into two triangles and render those two triangles.
-
-We use a similar method to the Menger sponge, where we'll duplicate points when they need to be used for multiple triangles.
+We render the system by converting the particle system into a triangle mesh. Since the cloth is arranged in a grid-like structure, for each "cell" (a square defined by four points), we can simply split that into two triangles and render those two triangles. We use a similar method to the Menger sponge, where we'll duplicate points when they need to be used for multiple triangles.
 
 ##### Smooth Shading Normals
 We implement smooth shading following the instructions here (https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals). The idea here is that we should assign vertex normals to the average of the normals of all the faces that the vertex borders. This ensures that the cloth is smooth and hides the internal triangle mesh structure.
@@ -51,9 +47,7 @@ We implement smooth shading following the instructions here (https://computergra
 To turn smooth shading on and off, use the given checkbox. Smooth shading is by default on. When smooth shading is off, the scene instead uses flat shading, e.g. each triangle is a flat plane. Additionally, we only render half the triangles so that you can see exactly where the vertices are and how the triangles are being generated.
 
 #### Limitations
-There are several limitations of this approach. Importantly, this is not a completely realistic representation of cloth, and in many places is simply "good enough." (can we elaborate here, I don't really know what to say)
-
-For example, the drag force is simply an approximation of energy loss. Additionally, many constants are manually-tuned in order to generate plausible-looking behavior. We find that it is quite difficult to tune these constants, and getting it wrong often causes the cloth to "explode" or "implode". 
+There are several limitations of this approach. Importantly, this is not a completely realistic representation of cloth, and in many places is simply "good enough." (can we elaborate here, I don't really know what to say) For example, the drag force is simply an approximation of energy loss. Additionally, many constants are manually-tuned in order to generate plausible-looking behavior. We find that it is quite difficult to tune these constants, and getting it wrong often causes the cloth to "explode" or "implode". 
 
 blah blah blah
 Additionally, self-collisions are hard to model accurately with a limited computational budget. 
@@ -68,9 +62,7 @@ The contents of this README and `report.pdf` are identical. We provide:
 2. some pre-generated videos in the environment for your viewing convenience in `demos/`.
 
 ### How to Run
-This project can be run the same way as every other WebGL project from this semester. First, run, `make-cloth.py` from the project root directory, and then launch an HTTP server with `http-server dist -c-1`. This will launch an interactive demo.
-
-You can use the typical camera controls (`WASD`, arrow keys) to navigate around the environment. 
+This project can be run the same way as every other WebGL project from this semester. First, run, `make-cloth.py` from the project root directory, and then launch an HTTP server with `http-server dist -c-1`. This will launch an interactive demo. You can use the typical camera controls (`WASD`, arrow keys) to navigate around the environment. 
 
 We provide some interesting sliders and toggles. We point to *Wind Strength* in particular, which < what does wind actually do? > will generate some interesting interactions. `Toggle Smooth Shading` changes the way the cloth is rendered as described above. `Prevent Cloth Self-Intersections` is also toggle-able, but is an experimental feature due to it being computationally expensive. We also provide settings for tensile strength, drag force, speed (of animation).
 
