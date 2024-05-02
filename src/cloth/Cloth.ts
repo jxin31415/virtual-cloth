@@ -416,29 +416,32 @@ export class Cloth {
     let density = this.density;
     this.currScene = level;
 
-    for (let i = 0; i <= this.density; i++) {
-      for(let j = 0; j <= this.density; j++) {
-        let num1 = i*(this.density+1)+j;
+    this.points = [];
 
+    for (let i = 0; i <= this.density; i++) {
+      for(let j = 0; j <= this.density; j++) {        
+        let clothPoint = new ClothPoint(new Vec3(), new Vec3(), false);
         if(level < 5){
-          this.points[num1].pos = new Vec3([i * pt_dist, j * pt_dist, j * pt_dist * 0.5]);
-          this.points[num1].hasSphere = false;
+          clothPoint.pos = new Vec3([i * pt_dist, j * pt_dist, j * pt_dist * 0.5]);
+          clothPoint.hasSphere = false;
         }else{
-          this.points[num1].pos = new Vec3([i * pt_dist - 0.5, 1, j * pt_dist - 0.5]);
-          this.points[num1].hasSphere = true;
+          clothPoint.pos = new Vec3([i * pt_dist - 0.5, 1, j * pt_dist - 0.5]);
+          clothPoint.hasSphere = true;
         }
         // this is here for debugging + it looks cool
         // new Vec3([i * pt_dist + Math.random() * 0.05, j * pt_dist + Math.random() * 0.05, i * pt_dist * 0.5 + Math.random() * 0.1]),
 
-        this.points[num1].prevpos = this.points[num1].pos;
-        this.points[num1].vel = new Vec3([0, 0, 0]);
-        this.points[num1].accel = new Vec3([0, 0, 0]);
+        clothPoint.prevpos = clothPoint.pos;
+        clothPoint.vel = new Vec3([0, 0, 0]);
+        clothPoint.accel = new Vec3([0, 0, 0]);
 
-        this.points[num1].fixed = level==1 ? ((i==0||i==this.density)&&j==this.density) : //top 2 points
+        clothPoint.fixed = level==1 ? ((i==0||i==this.density)&&j==this.density) : //top 2 points
           level==2 ? ((i==0||i==this.density)&&(j==0||j==this.density)) : //all 4 points
           level==3 ? (i==0&&j==this.density) : // 1 point
           level==6 ? (i==this.density/2&&j==this.density/2):
           false;
+         
+        this.points.push(clothPoint);
       }
     }
 
