@@ -307,13 +307,6 @@ export class GUI implements IGUI {
       this.cloth.setDrag(d);
     });
 
-    const densitySlider = document.getElementById("densitySlider") as HTMLInputElement;
-    densitySlider.addEventListener("input", () => {
-      const d = parseFloat(densitySlider.value);
-      this.cloth = new Cloth(d, this.level);
-      this.animation.setCloth(this.cloth);
-    });
-
     const collisionCheckbox = document.getElementById("collisions") as HTMLInputElement;
     collisionCheckbox.addEventListener("change", () => {
       if (collisionCheckbox.checked) {
@@ -330,6 +323,19 @@ export class GUI implements IGUI {
       }else{
         this.cloth.toggleNormalsB(false);
       }
+    });
+
+    const densitySlider = document.getElementById("densitySlider") as HTMLInputElement;
+    densitySlider.addEventListener("input", () => {
+      const d = parseFloat(densitySlider.value);
+      this.cloth = new Cloth(d, this.level);
+      this.animation.setCloth(this.cloth);
+      windSlider.value = "0.0";
+      dragSlider.value = "0.1";
+      tSlider.value = "0.1";
+      tensileSlider.value = "30";
+      normalCheckbox.checked = true;
+      collisionCheckbox.checked = false;
     });
     
   }
