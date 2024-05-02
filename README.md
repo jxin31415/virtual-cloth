@@ -38,7 +38,10 @@ We model a cloth simply as a network of points and springs connecting those poin
 ### Rendering
 We render the system by converting the particle system into a triangle mesh. Since the cloth is arranged in a grid-like structure, for each "cell" (a square defined by four points), we can simply split that into two triangles and render those two triangles.
 
-We use a similar method to the Menger sponge, where we'll duplicate points when they need to be used for multiple triangles. Normals are calculated by finding the plane that defines the triangle. A future extension would be to make this normal calculation smoother.
+We use a similar method to the Menger sponge, where we'll duplicate points when they need to be used for multiple triangles.
+
+#### Smooth Shading Normals
+We implement smooth shading following the instructions here (https://computergraphics.stackexchange.com/questions/4031/programmatically-generating-vertex-normals). The idea here is that we should assign vertex normals to the average of the normals of all the faces that the vertex borders. This ensures that the cloth is smooth and hides the internal triangle mesh structure.
 
 ## Collisions
 We do some rudimentary collision tracking, such as colliding with the floor or with a sphere.
