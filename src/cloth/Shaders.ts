@@ -40,7 +40,7 @@ export let defaultFSText = `
 
         float diffuse = clamp(dot(ldNorm, nNorm), 0.0, 1.0);
 
-        vec4 color = vec4(abs(normal[0]) * diffuse * 0.7, 0.0, 1.0, 1.0);
+        vec4 color = vec4(abs(normal[0]) * diffuse * -0.3 + 0.6, abs(normal[1]) * diffuse * -0.3 + 0.6, abs(normal[2]) * diffuse * -0.3 + 0.8, 1.0);
         gl_FragColor = color;
 
         // gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
@@ -101,7 +101,7 @@ export let floorFSText = `
         int modZ = int(mod(worldPos.z / gridSize, 2.0));
         bool isWhite = bool(mod(float(modX + modZ), 2.0));
     
-        vec3 white = vec3(1.0, 1.0, 1.0);
+        vec3 white = vec3(0.6, 0.6, 0.6);
         vec3 black = vec3(0.0, 0.0, 0.0);
     
         vec3 color;
