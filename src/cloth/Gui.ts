@@ -292,6 +292,15 @@ export class GUI implements IGUI {
       const d = parseFloat(dragSlider.value);
       this.cloth.setDrag(d);
     });
+
+    const collisionCheckbox = document.getElementById("collisions") as HTMLInputElement;
+    collisionCheckbox.addEventListener("change", () => {
+      if (collisionCheckbox.checked) {
+        this.cloth.setCollisions(true);
+      } else {
+        this.cloth.setCollisions(false);
+      }
+    });
   }
 
   public setCloth(c: Cloth){
